@@ -8,7 +8,7 @@ export const STATUSES = ["available", "pending", "completed", "unavailable"] as 
 
 export const createTradeSchema = z.object({
       title: z.string().trim().min(1).max(120),
-      ownerName: z.string().trim().min(1).max(80),
+      // ownerName is no longer client-supplied — it is stamped from the session user.
       offering: z.string().trim().min(1).max(200),
       wanting: z.string().trim().min(1).max(200),
       itemType: z.enum(ITEM_TYPES),

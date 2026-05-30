@@ -17,8 +17,11 @@ function photoUrlFrom(req: Request): string | undefined {
 export async function createTrade(req: Request, res: Response) {
       const input = createTradeSchema.parse(req.body);
       const photoUrl = photoUrlFrom(req);
+      const user = req.user!;
       const trade = await tradesService.createTrade({
             ...input,
+            userId: user.id,
+            ownerName: user.displayName,
             ...(photoUrl ? { photoUrl } : {}),
       });
       res.status(201).json(trade);
@@ -40,7 +43,7 @@ export async function updateTrade(req: Request, res: Response) {
       const { id } = tradeIdParamSchema.parse(req.params);
       const patch = updateTradeSchema.parse(req.body);
       const photoUrl = photoUrlFrom(req);
-      const trade = await tradesService.updateTradeWithReputation(id, {
+      const trade = await tradesService.updateTradeWithReputation(id, req.user!.id, {
             ...patch,
             ...(photoUrl ? { photoUrl } : {}),
       });
@@ -49,7 +52,7 @@ export async function updateTrade(req: Request, res: Response) {
 
 export async function deleteTrade(req: Request, res: Response) {
       const { id } = tradeIdParamSchema.parse(req.params);
-      await tradesService.deleteTrade(id);
+      await tradesService.deleteTrade(id, req.user!.id);
       res.json({ message: "Trade deleted" });
 }
 
