@@ -12,6 +12,7 @@ import { AddTradeForm } from "../components/AddTradeForm";
 import { TradeGrid } from "../components/TradeGrid";
 import { ConfirmDeleteDialog } from "../components/ConfirmDeleteDialog";
 import { CompleteTradeDialog } from "../components/CompleteTradeDialog";
+import { useDebouncedValue } from "../lib/useDebouncedValue";
 
 const EMPTY_FILTERS: TradeFilters = {
   search: "",
@@ -45,12 +46,17 @@ export function TradesPage() {
   const [completeSubmitting, setCompleteSubmitting] = useState(false);
   const [completeError, setCompleteError] = useState<string | null>(null);
 
-  // Fetch on mount and whenever filters change. The `active` flag drops a stale
-  // response if filters changed again before this request resolved.
+  // Dropdown filters apply immediately; the free-text search is debounced so we
+  // don't refetch on every keystroke.
+  const { area, itemType, urgency, status } = filters;
+  const debouncedSearch = useDebouncedValue(filters.search, 300);
+
+  // Fetch on mount and whenever an applied filter changes. The `active` flag
+  // drops a stale response if filters changed again before this one resolved.
   useEffect(() => {
     let active = true;
     setLoading(true);
-    fetchTrades(filters)
+    fetchTrades({ search: debouncedSearch, area, itemType, urgency, status })
       .then((data) => {
         if (!active) return;
         setTrades(data);
@@ -65,7 +71,7 @@ export function TradesPage() {
     return () => {
       active = false;
     };
-  }, [filters]);
+  }, [area, itemType, urgency, status, debouncedSearch]);
 
   // Distinct locations for the filter dropdown, derived from loaded trades.
   const areaOptions = useMemo(
