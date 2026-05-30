@@ -4,7 +4,7 @@ import { marketplaceTradesRoutes } from "./modules/marketplace-trades/marketplac
 import { DonationsPage } from "./modules/donations/DonationsPage";
 import { emergencyRoutes } from "./modules/emergency-requests/routers/emergency.routes";
 import { exchangeRoutes } from "./modules/exchange/exchange.routes";
-import { ProfilePage } from "./pages/ProfilePage";
+import { profileRoutes } from "./modules/profile/profile.routes";
 
 /**
  * Root browser router — Area I (coordinate before editing).
@@ -49,10 +49,7 @@ const mainRouter = createBrowserRouter([
       ...exchangeRoutes,
 
       // Profile placeholder                                         path: /profile
-      {
-        path: "/profile",
-        element: <ProfilePage />,
-      },
+      ...profileRoutes,
       // ──────────────────────────────────────────────────────────
     ],
   },
