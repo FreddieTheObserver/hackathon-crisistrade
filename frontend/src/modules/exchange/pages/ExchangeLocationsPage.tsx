@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState, type KeyboardEvent } from "react";
-import { NavLink } from "react-router-dom";
 import { getExchangePoints } from "../exchange.api";
 import { demoExchangePoints } from "../exchange.demo-data";
 import type { ExchangePoint } from "../exchange.types";
@@ -93,23 +92,6 @@ const ExchangeLocationsPage = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
-      <header className="sticky top-0 z-10 border-b border-slate-200 bg-white shadow-sm">
-        <div className="mx-auto flex h-20 max-w-360 items-center justify-between px-8">
-
-          <nav className="hidden items-center gap-16 text-sm font-semibold text-slate-700 md:flex">
-            <a href="/admin" className="transition hover:text-emerald-600">Admin</a>
-          </nav>
-
-          <NavLink
-            to="/admin/integration-needed"
-            className="flex h-12 w-12 items-center justify-center rounded-full border border-blue-200 bg-blue-100 text-base font-bold text-slate-800 shadow-sm"
-            aria-label="Open user menu"
-          >
-            AK
-          </NavLink>
-        </div>
-      </header>
-
       <main id="locations" className="mx-auto max-w-290 px-6 py-10">
         <section className="mb-10">
           {error && (

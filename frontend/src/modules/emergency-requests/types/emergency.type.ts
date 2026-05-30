@@ -1,6 +1,6 @@
 export type EmergencyUrgency = "Urgent" | "Medium" | "Low";
 
-export type EmergencyStatus = "Open" | "Helped";
+export type EmergencyStatus = "Open" | "Helped" | "Suspended" | "Banned";
 
 export type EmergencyPost = {
   contact: string;

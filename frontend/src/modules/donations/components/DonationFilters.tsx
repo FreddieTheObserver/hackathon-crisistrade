@@ -70,6 +70,8 @@ export function DonationFilters({
         <option value="AVAILABLE">Available</option>
         <option value="RESERVED_PENDING">Reserved</option>
         <option value="TAKEN_FINISHED">Taken</option>
+        <option value="SUSPENDED">Suspended</option>
+        <option value="BANNED">Banned</option>
       </select>
 
       <button

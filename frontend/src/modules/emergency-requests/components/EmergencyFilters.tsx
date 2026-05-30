@@ -48,7 +48,7 @@ const EmergencyFilters = ({ locationOptions, onChange, values }: EmergencyFilter
       <EmergencyFilterSelect
         label="Status"
         onChange={(value) => updateFilter("status", value as EmergencyFilterValues["status"])}
-        options={["All Status", "Open", "Helped"]}
+        options={["All Status", "Open", "Helped", "Suspended", "Banned"]}
         value={values.status}
       />
       <div className="lg:w-36 lg:flex lg:items-end">

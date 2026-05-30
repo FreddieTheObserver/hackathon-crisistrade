@@ -5,12 +5,16 @@ const statusLabels: Record<DonationStatus, string> = {
   AVAILABLE: "Available",
   RESERVED_PENDING: "Reserved",
   TAKEN_FINISHED: "Taken",
+  SUSPENDED: "Suspended",
+  BANNED: "Banned",
 };
 
 const statusClasses: Record<DonationStatus, string> = {
   AVAILABLE: "bg-emerald-50 text-emerald-700",
   RESERVED_PENDING: "bg-blue-50 text-blue-700",
   TAKEN_FINISHED: "bg-amber-50 text-amber-700",
+  SUSPENDED: "bg-orange-50 text-orange-700",
+  BANNED: "bg-red-50 text-red-700",
 };
 
 // short time text for cards
@@ -159,6 +163,8 @@ export function DonationCard({
             <option value="AVAILABLE">Available</option>
             <option value="RESERVED_PENDING">Reserved/Pending</option>
             <option value="TAKEN_FINISHED">Taken/Finished</option>
+            <option value="SUSPENDED">Suspended</option>
+            <option value="BANNED">Banned</option>
           </select>
 
           <span className="text-xs text-slate-400">

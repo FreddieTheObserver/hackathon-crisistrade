@@ -1,7 +1,9 @@
 export type DonationStatus =
   | "AVAILABLE"
   | "RESERVED_PENDING"
-  | "TAKEN_FINISHED";
+  | "TAKEN_FINISHED"
+  | "SUSPENDED"
+  | "BANNED";
 
 export type Donation = {
   id: number;

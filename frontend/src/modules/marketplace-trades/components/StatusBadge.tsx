@@ -5,6 +5,8 @@ const STATUS_STYLES: Record<Status, { label: string; className: string }> = {
   pending: { label: "Reserved", className: "bg-amber-100 text-amber-800" },
   completed: { label: "Completed", className: "bg-blue-100 text-blue-800" },
   unavailable: { label: "Unavailable", className: "bg-red-100 text-red-700" },
+  suspended: { label: "Suspended", className: "bg-orange-100 text-orange-800" },
+  banned: { label: "Banned", className: "bg-red-200 text-red-800" },
 };
 
 interface StatusBadgeProps {

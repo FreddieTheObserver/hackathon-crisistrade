@@ -4,6 +4,8 @@ export const donationStatusSchema = z.enum([
   "AVAILABLE",
   "RESERVED_PENDING",
   "TAKEN_FINISHED",
+  "SUSPENDED",
+  "BANNED",
 ]);
 
 // create request rules
