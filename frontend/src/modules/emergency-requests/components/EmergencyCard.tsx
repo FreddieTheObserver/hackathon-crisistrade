@@ -28,6 +28,14 @@ const getPostTimeLabel = (createdAt: string) => {
   const diffMs = Date.now() - createdAtTime;
   const diffHours = Math.max(0, Math.floor(diffMs / (1000 * 60 * 60)));
 
+  const formatDate = (date: Date) => {
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+
+    return `${day}/${month}/${year}`;
+  };
+
   if (diffHours < 1) {
     return "Just now";
   }
@@ -36,7 +44,11 @@ const getPostTimeLabel = (createdAt: string) => {
     return `${diffHours}h ago`;
   }
 
-  return `${Math.floor(diffHours / 24)}d ago`;
+  if (diffHours < 48) {
+    return "Yesterday";
+  }
+
+  return formatDate(new Date(createdAtTime));
 };
 
 const EmergencyCard = ({
