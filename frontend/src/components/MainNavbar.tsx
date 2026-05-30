@@ -96,21 +96,39 @@ export const MainNavbar = () => {
           })}
         </nav>
 
-        <NavLink
-          to="/profile"
-          className={({ isActive }) =>
-            [
-              "flex h-10 w-10 shrink-0 items-center justify-center rounded-full border text-sm font-bold shadow-sm transition-colors duration-200",
-              isActive
-                ? "border-blue-300 bg-blue-600 text-white"
-                : "border-blue-200 bg-blue-100 text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800",
-            ].join(" ")
-          }
-          aria-label={user ? `Profile — ${user.displayName}` : "Profile"}
-          title={user?.displayName}
-        >
-          {user ? initialsOf(user.displayName) : "?"}
-        </NavLink>
+        <div className="flex shrink-0 items-center gap-3">
+          {user?.role === "admin" && (
+            <NavLink
+              to="/admin"
+              className={({ isActive }) =>
+                [
+                  "rounded-full border px-3 py-1.5 text-sm font-semibold transition-colors duration-200",
+                  isActive
+                    ? "border-emerald-300 bg-emerald-600 text-white"
+                    : "border-emerald-200 bg-emerald-50 text-emerald-700 hover:border-emerald-300 hover:bg-emerald-100",
+                ].join(" ")
+              }
+            >
+              Admin
+            </NavLink>
+          )}
+
+          <NavLink
+            to="/profile"
+            className={({ isActive }) =>
+              [
+                "flex h-10 w-10 items-center justify-center rounded-full border text-sm font-bold shadow-sm transition-colors duration-200",
+                isActive
+                  ? "border-blue-300 bg-blue-600 text-white"
+                  : "border-blue-200 bg-blue-100 text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800",
+              ].join(" ")
+            }
+            aria-label={user ? `Profile — ${user.displayName}` : "Profile"}
+            title={user?.displayName}
+          >
+            {user ? initialsOf(user.displayName) : "?"}
+          </NavLink>
+        </div>
       </div>
     </header>
   );
