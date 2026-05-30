@@ -53,7 +53,8 @@ Authentication was added in the integration phase (backend, branch `share/auth`)
 - **`requireAuth`** (`backend/src/middlewares/require-auth.ts`, Area I) verifies the cookie and attaches `req.user = { id, email, displayName }`; absent/invalid → 401. `Express.Request` is augmented in `backend/src/types/express.d.ts`.
 - **Ownership:** every post carries its creator as a plain `userId` string (no Prisma FK relation — consistent with the by-name `Trader` link) plus a denormalized `ownerName`. Donations reuse their existing `ownerId`. Owner is **stamped from the session** on create; **reads are public**, but **create/update/delete require `requireAuth`** and 403 when `record.userId !== req.user.id`.
 - **Reputation:** the owner side of a completed trade links its `Trader` to the real account via `Trader.userId`; the counterparty stays a typed name (by-name `Trader`, no account). `GET /auth/me` returns the caller's `reputationPoints`.
-- **Still deferred to frontend integration:** the Rules & Regulations acceptance gate and a real `ProtectedRoute` (still a pass-through), plus the admin/moderation dashboard.
+- **Admin moderation:** `User.role` (`"user"` | `"admin"`) carried in the session JWT and returned by `/auth/me`. `isAdmin`/`requireAdmin` live in `require-auth.ts`. Admins **bypass** every board's owner-check (`isAdmin || owner`), so the admin UI moderates posts (suspend/ban/restore/delete) through the **existing board endpoints** — no separate admin API. Admins are created via seed only; signup always creates a plain `user` (no self-elevation). Status enums gained `suspended`/`banned` per board for moderation.
+- **Still deferred to frontend integration:** the Rules & Regulations acceptance gate and a real `ProtectedRoute` (still a pass-through). The admin dashboard UI exists (frontend) and is now backed by role-gated moderation.
 
 ## Invariants
 
