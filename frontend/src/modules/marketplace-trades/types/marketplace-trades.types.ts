@@ -18,3 +18,4 @@ export interface TradeFilters {
       urgency: Urgency | '';
       status: Status | '';
 }
+export type { ItemType, Urgency, Status } from '../schemas/marketplace-trades.schemas';
