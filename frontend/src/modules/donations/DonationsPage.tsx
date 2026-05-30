@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import axios from "axios";
 import { Heart } from "lucide-react";
 import {
   createDonation,
@@ -17,6 +18,37 @@ import type {
 } from "./donationsTypes";
 
 type DonationFormErrors = Partial<Record<keyof DonationFormValues, string>>;
+
+// Turn an unknown thrown value into a message that names the real cause:
+// server unreachable vs. expired session vs. a validation/ownership error from
+// the API, falling back to a generic message for anything unexpected.
+function donationErrorMessage(error: unknown, fallback: string): string {
+  if (axios.isAxiosError(error)) {
+    if (!error.response) {
+      return "Can't reach the server. Make sure the backend is running and try again.";
+    }
+
+    const { status } = error.response;
+    if (status === 401) {
+      return "Your session has expired. Please log in again.";
+    }
+
+    const data = error.response.data as
+      | { message?: string; issues?: { message?: string }[] }
+      | undefined;
+    if (data?.issues?.[0]?.message) {
+      return data.issues[0].message;
+    }
+    if (data?.message) {
+      return data.message;
+    }
+    if (status === 403) {
+      return "You can only change your own donations.";
+    }
+  }
+
+  return fallback;
+}
 
 const emptyForm: DonationFormValues = {
   title: "",
@@ -64,8 +96,8 @@ export function DonationsPage() {
     try {
       const data = await getDonations();
       setDonations(data);
-    } catch {
-      setError("Could not load donations.");
+    } catch (error) {
+      setError(donationErrorMessage(error, "Could not load donations."));
     } finally {
       setIsLoading(false);
     }
@@ -200,8 +232,8 @@ export function DonationsPage() {
 
     resetForm();
     await loadDonations();
-  } catch {
-    setError("Could not save donation.");
+  } catch (error) {
+    setError(donationErrorMessage(error, "Could not save donation."));
   }
 }
 
@@ -211,8 +243,8 @@ export function DonationsPage() {
     try {
       await deleteDonation(id);
       await loadDonations();
-    } catch {
-      setError("Could not delete donation.");
+    } catch (error) {
+      setError(donationErrorMessage(error, "Could not delete donation."));
     }
   }
 
@@ -222,8 +254,8 @@ export function DonationsPage() {
     try {
       await updateDonation(id, { status });
       await loadDonations();
-    } catch {
-      setError("Could not update status.");
+    } catch (error) {
+      setError(donationErrorMessage(error, "Could not update status."));
     }
   }
 
