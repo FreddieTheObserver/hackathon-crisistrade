@@ -11,6 +11,7 @@
 | Backend     | Express 5 + TypeScript (tsx)                | REST API, dev server on `http://localhost:3000`                   |
 | Validation  | Zod                                         | Validates external input at the API boundary (front and back)     |
 | Database    | SQLite via Prisma 7 (libSQL adapter)        | Persistent storage for posts and reputation                       |
+| File upload | Multer (disk storage)                       | Image uploads saved to `backend/uploads/`, served at `/uploads`   |
 | Auth        | None (not implemented in individual phase)  | `ProtectedRoute` is currently a pass-through placeholder          |
 
 ## System Boundaries
@@ -19,7 +20,7 @@ The repo follows the PreHack shared-folder convention: **Area I** (shared infras
 
 ### Area I — Shared infrastructure (coordinate before editing)
 
-- `backend/src/index.ts` — Express app setup, middleware (json, urlencoded, cookie-parser, cors), router mount, error handler, server start.
+- `backend/src/index.ts` — Express app setup, middleware (json, urlencoded, cookie-parser, cors), static serving of uploaded files at `/uploads`, router mount, error handler, server start.
 - `backend/src/routers.ts` — root `mainRouter`; each feature mounts its router here under a distinct prefix.
 - `backend/src/db.ts` — Prisma client instance (libSQL adapter); import `prisma` from here.
 - `backend/src/middlewares/error_handler.ts` — central error handler; handles `ZodError` (400) and `AppError.status`.
@@ -40,7 +41,7 @@ The repo follows the PreHack shared-folder convention: **Area I** (shared infras
 ## Storage Model
 
 - **SQLite (via Prisma)**: the source of truth for all post data and reputation. Each board owns one or more Prisma models appended to the shared `schema.prisma`. Post metadata, status fields, and reputation counters all live here.
-- **No blob/file storage**: the MVP has no media or large-artifact uploads.
+- **Local file storage for image uploads**: boards that accept a photo (e.g. Marketplace Trades) upload it via Multer to the local `backend/uploads/` directory, served statically at `/uploads`. Only the relative file URL (e.g. `/uploads/<file>`) is persisted in SQLite as a string column (e.g. `Trade.photoUrl`) — the binary itself is **not** stored in the database. Uploads are restricted to image MIME types with a small size cap (~2 MB); the directory is git-ignored (kept with a `.gitkeep`). No cloud/object storage in the MVP.
 - **No browser localStorage for canonical data**: although the original product brief mentioned local browser storage for a demo, this implementation persists data through the real SQLite backend. localStorage may only be used later for non-canonical UI state (e.g., the integration-phase rules-acceptance flag).
 
 ## Auth and Access Model
