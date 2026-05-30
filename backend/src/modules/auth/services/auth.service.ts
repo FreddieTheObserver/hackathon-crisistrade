@@ -12,8 +12,8 @@ function httpError(status: number, message: string): never {
   throw Object.assign(new Error(message), { status });
 }
 
-function toAuthUser(u: { id: string; email: string; displayName: string }): AuthUser {
-  return { id: u.id, email: u.email, displayName: u.displayName };
+function toAuthUser(u: { id: string; email: string; displayName: string; role: string }): AuthUser {
+  return { id: u.id, email: u.email, displayName: u.displayName, role: u.role };
 }
 
 export function signToken(user: AuthUser): string {
@@ -22,7 +22,12 @@ export function signToken(user: AuthUser): string {
 
 export function verifyToken(token: string): AuthUser {
   const decoded = jwt.verify(token, JWT_SECRET as string) as jwt.JwtPayload & AuthUser;
-  return { id: decoded.id, email: decoded.email, displayName: decoded.displayName };
+  return {
+    id: decoded.id,
+    email: decoded.email,
+    displayName: decoded.displayName,
+    role: decoded.role ?? "user",
+  };
 }
 
 export async function registerUser(input: {
