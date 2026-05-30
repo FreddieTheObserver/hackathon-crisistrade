@@ -110,7 +110,7 @@ const ExchangeLocationsPage = () => {
         </div>
       </header>
 
-      <main id="locations" className="mx-auto max-w-290 px-6 py-10">
+      <main id="locations" className="mx-auto max-w-6xl px-6 py-6">
         <section className="mb-10">
           {error && (
             <div className="mb-6 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-800">
@@ -123,7 +123,7 @@ const ExchangeLocationsPage = () => {
               <TargetIcon />
             </div>
             <div>
-              <h1 className="text-3xl font-bold tracking-normal text-slate-950">Safe Exchange Locations</h1>
+              <h1 className="text-2xl font-bold tracking-normal text-slate-950">Safe Exchange Locations</h1>
               <p className="mt-1 text-base font-medium text-slate-500">
                 Find trusted public places to meet safely in your community.
               </p>
