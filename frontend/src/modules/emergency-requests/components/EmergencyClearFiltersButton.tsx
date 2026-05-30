@@ -1,5 +1,4 @@
-import EmergencyIcon from "./EmergencyIcon";
-import xxButton from "../assets/XXbutton.svg";
+import { XIcon } from "./EmergencySvgIcons";
 
 type EmergencyClearFiltersButtonProps = {
   onClick: () => void;
@@ -12,7 +11,7 @@ const EmergencyClearFiltersButton = ({ onClick }: EmergencyClearFiltersButtonPro
       onClick={onClick}
       type="button"
     >
-      <EmergencyIcon className="h-3 w-3" src={xxButton} />
+      <XIcon className="h-3 w-3" />
       <span>Clear Filters</span>
     </button>
   );

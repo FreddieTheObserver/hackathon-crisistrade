@@ -1,6 +1,6 @@
 import EmergencyActionButton from "./EmergencyActionButton";
 import emergencyLogo from "../assets/EmergencyLogo.png";
-import plusLogo from "../assets/PlusLogo.svg";
+import { PlusIcon } from "./EmergencySvgIcons";
 
 type EmergencyHeaderProps = {
   onAddEmergency: () => void;
@@ -20,7 +20,7 @@ const EmergencyHeader = ({ onAddEmergency }: EmergencyHeaderProps) => {
         </div>
       </div>
 
-      <EmergencyActionButton iconSrc={plusLogo} label="Add Emergency" onClick={onAddEmergency} />
+      <EmergencyActionButton icon={<PlusIcon className="h-3.5 w-3.5" />} label="Add Emergency" onClick={onAddEmergency} />
     </section>
   );
 };

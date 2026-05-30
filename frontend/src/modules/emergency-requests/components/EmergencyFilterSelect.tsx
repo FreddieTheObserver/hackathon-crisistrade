@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { ChevronDownIcon } from "./EmergencySvgIcons";
 
 type EmergencyFilterSelectProps = {
   label: string;
@@ -60,14 +61,7 @@ const EmergencyFilterSelect = ({
         type="button"
       >
         <span className="text-sm font-semibold">{value}</span>
-        <svg
-          aria-hidden="true"
-          className={`h-5 w-5 text-[#1D2A44] transition-transform ${isOpen ? "rotate-180" : ""}`}
-          fill="none"
-          viewBox="0 0 24 24"
-        >
-          <path d="m6 9 6 6 6-6" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" />
-        </svg>
+        <ChevronDownIcon className={`h-5 w-5 text-[#1D2A44] transition-transform ${isOpen ? "rotate-180" : ""}`} />
       </button>
 
       {isOpen && (

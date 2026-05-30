@@ -1,8 +1,5 @@
-import EmergencyIcon from "./EmergencyIcon";
 import type { EmergencyPost } from "../types/emergency.type";
-import editLogo from "../assets/EditLogo.svg";
-import locationLogo from "../assets/LocationLogo.svg";
-import trashLogo from "../assets/TrashLogo.svg";
+import { MapPinIcon, PencilLineIcon, Trash2Icon } from "./EmergencySvgIcons";
 
 type EmergencyCardProps = {
   onDelete?: (postId: string) => void;
@@ -124,7 +121,7 @@ const EmergencyCard = ({
         <div className="mt-5 grid flex-1 grid-cols-[minmax(0,1fr)_auto] items-start gap-4">
           <div className="min-w-0">
             <div className="grid grid-cols-[auto_minmax(0,1fr)] items-start gap-2 text-sm font-semibold text-[#1D2A44]">
-              <EmergencyIcon className="h-4 w-4 shrink-0" src={locationLogo} />
+              <MapPinIcon className="h-4 w-4 shrink-0" />
               <span className="break-all leading-snug">{post.location}</span>
             </div>
             <p className="mt-3 break-all text-sm leading-snug text-[#1D2A44]">{post.note || "No note added."}</p>
@@ -139,7 +136,7 @@ const EmergencyCard = ({
                     onClick={() => onEdit?.(post)}
                     type="button"
                   >
-                    <EmergencyIcon className="h-4 w-4" src={editLogo} />
+                    <PencilLineIcon className="h-4 w-4" />
                   </button>
                 )}
                 <button
@@ -147,7 +144,7 @@ const EmergencyCard = ({
                   onClick={() => onDelete?.(post.id)}
                   type="button"
                 >
-                  <EmergencyIcon className="h-4 w-4" src={trashLogo} />
+                  <Trash2Icon className="h-4 w-4" />
                 </button>
               </div>
               {post.status === "Open" && (

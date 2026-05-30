@@ -3,9 +3,8 @@ import { useState } from "react";
 import EmergencyActionButton from "./EmergencyActionButton";
 import EmergencyFilterSelect from "./EmergencyFilterSelect";
 import EmergencyFormInput from "./EmergencyFormInput";
-import EmergencyIcon from "./EmergencyIcon";
 import EmergencyUploadButton from "./EmergencyUploadButton";
-import plusLogo from "../assets/PlusLogo.svg";
+import { PlusIcon } from "./EmergencySvgIcons";
 import type { EmergencyFormPayload, EmergencyPost, EmergencyUrgency } from "../types/emergency.type";
 
 type EmergencyFormProps = {
@@ -116,7 +115,7 @@ const EmergencyForm = ({ editingPost, onClose, onSubmit }: EmergencyFormProps) =
       <div className="flex items-start justify-between gap-6">
         <div className="flex items-start gap-4">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-500 text-2xl font-medium text-white">
-            <EmergencyIcon className="h-4 w-4" src={plusLogo} />
+            <PlusIcon className="h-4 w-4" />
           </div>
           <div>
             <h2 className="text-xl font-bold text-red-500">
