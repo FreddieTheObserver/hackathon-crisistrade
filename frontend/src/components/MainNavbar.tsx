@@ -13,7 +13,6 @@ const navItems: NavItem[] = [
   { label: "Emergency", to: "/requests", tone: "emergency" },
   { label: "Donations", to: "/donations", tone: "donation" },
   { label: "Locations", to: "/exchange-points", tone: "location" },
-  // Add new navbar route links here when router integration is ready.
 ];
 
 const navToneClasses: Record<NavTone, { text: string; underline: string }> = {
@@ -45,10 +44,10 @@ export const MainNavbar = () => {
 
   return (
     <header className="sticky top-0 z-20 border-b border-slate-200 bg-white shadow-sm">
-      <div className="mx-auto flex min-h-20 max-w-7xl items-center justify-between gap-6 px-6 py-4">
-        <Link to="/" className="flex shrink-0 items-center gap-3">
-          <img src="/MainLogo.png" alt="" className="h-12 w-12 object-contain" />
-          <span className="text-2xl font-bold tracking-normal text-slate-900">
+      <div className="mx-auto flex min-h-16 max-w-7xl items-center justify-between gap-6 px-6 py-3">
+        <Link to="/" className="flex shrink-0 items-center gap-2">
+          <img src="/MainLogo.png" alt="" className="h-10 w-10 object-contain" />
+          <span className="text-xl font-bold tracking-normal text-slate-900">
             Crisis <span className="text-emerald-600">Trade</span>
           </span>
         </Link>
@@ -73,7 +72,7 @@ export const MainNavbar = () => {
                     <span>{item.label}</span>
                     <span
                       className={[
-                        "absolute inset-x-0 -bottom-6 h-0.5 origin-center rounded-full transition-all duration-200",
+                        "absolute inset-x-0 -bottom-4 h-0.5 origin-center rounded-full transition-all duration-200",
                         tone.underline,
                         isActive
                           ? "scale-x-100 opacity-100"
@@ -91,7 +90,7 @@ export const MainNavbar = () => {
           to="/profile"
           className={({ isActive }) =>
             [
-              "flex h-11 w-11 shrink-0 items-center justify-center rounded-full border text-base font-bold shadow-sm transition-colors duration-200",
+              "flex h-10 w-10 shrink-0 items-center justify-center rounded-full border text-sm font-bold shadow-sm transition-colors duration-200",
               isActive
                 ? "border-blue-300 bg-blue-600 text-white"
                 : "border-blue-200 bg-blue-100 text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800",
