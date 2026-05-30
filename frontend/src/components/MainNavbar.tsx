@@ -26,20 +26,20 @@ const navItems: NavItem[] = [
 
 const navToneClasses: Record<NavTone, { text: string; underline: string }> = {
   trade: {
-    text: "text-yellow-500 hover:text-yellow-500",
-    underline: "bg-yellow-400",
+    text: "text-trade hover:text-trade",
+    underline: "bg-trade",
   },
   emergency: {
-    text: "text-red-500 hover:text-red-500",
-    underline: "bg-red-500",
+    text: "text-emergency hover:text-emergency",
+    underline: "bg-emergency",
   },
   donation: {
-    text: "text-green-600 hover:text-green-600",
-    underline: "bg-green-500",
+    text: "text-donation hover:text-donation",
+    underline: "bg-donation",
   },
   location: {
-    text: "text-sky-600 hover:text-sky-600",
-    underline: "bg-sky-500",
+    text: "text-location hover:text-location",
+    underline: "bg-location",
   },
 };
 
@@ -53,12 +53,12 @@ export const MainNavbar = () => {
   }
 
   return (
-    <header className="sticky top-0 z-20 border-b border-slate-200 bg-white shadow-sm">
+    <header className="sticky top-0 z-20 border-b border-line bg-surface shadow-sm">
       <div className="mx-auto flex min-h-16 max-w-7xl items-center justify-between gap-6 px-6 py-3">
         <Link to="/" className="flex shrink-0 items-center gap-2">
           <img src="/MainLogo.png" alt="" className="h-10 w-10 object-contain" />
-          <span className="text-xl font-bold tracking-normal text-slate-900">
-            Crisis <span className="text-emerald-600">Trade</span>
+          <span className="text-xl font-bold tracking-normal text-ink">
+            Crisis <span className="text-accent">Trade</span>
           </span>
         </Link>
 
@@ -73,7 +73,7 @@ export const MainNavbar = () => {
                 className={({ isActive }) =>
                   [
                     "group relative px-1 py-2 transition-colors duration-200",
-                    isActive ? tone.text : "text-slate-600 hover:text-slate-950",
+                    isActive ? tone.text : "text-muted hover:text-ink",
                   ].join(" ")
                 }
               >

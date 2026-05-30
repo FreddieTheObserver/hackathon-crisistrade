@@ -1,1 +1,40 @@
 @import "tailwindcss";
+
+/*
+ * Design tokens (see context/ui-context.md).
+ *
+ * CrisisTrade is a LIGHT technical workspace: near-white page, white surfaces,
+ * slate text, emerald accent, and one tone per board. Defining these under
+ * Tailwind 4's `@theme` generates utilities automatically, e.g.
+ * `--color-accent` → `bg-accent` / `text-accent` / `border-accent`.
+ *
+ * Prefer these semantic utilities over raw palette classes (bg-emerald-600,
+ * text-slate-900, …) in shared chrome. Board modules (Area II) should adopt
+ * them in their own folders.
+ */
+@theme {
+  /* Surfaces */
+  --color-page: #f8fafc; /* slate-50  — app background */
+  --color-surface: #ffffff; /* white     — cards, navbar, panels */
+
+  /* Text */
+  --color-ink: #0f172a; /* slate-900 — primary text */
+  --color-muted: #64748b; /* slate-500 — secondary text */
+
+  /* Accent (brand / primary action) */
+  --color-accent: #059669; /* emerald-600 */
+  --color-accent-strong: #047857; /* emerald-700 — hover/active */
+
+  /* Lines */
+  --color-line: #e2e8f0; /* slate-200 — borders, dividers */
+
+  /* State */
+  --color-danger: #dc2626; /* red-600 */
+  --color-success: #16a34a; /* green-600 */
+
+  /* Per-board tones */
+  --color-trade: #eab308; /* yellow-500 — Marketplace Trades */
+  --color-emergency: #ef4444; /* red-500    — Emergency Requests */
+  --color-donation: #22c55e; /* green-500  — Donations */
+  --color-location: #0ea5e9; /* sky-500    — Safe Exchange Points */
+}

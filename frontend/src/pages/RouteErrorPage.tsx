@@ -16,12 +16,12 @@ export function RouteErrorPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-6 text-center">
-      <h1 className="text-2xl font-bold text-slate-900">Something went wrong</h1>
-      <p className="mt-2 max-w-md text-sm text-slate-500">{detail}</p>
+    <div className="flex min-h-screen flex-col items-center justify-center bg-page px-6 text-center">
+      <h1 className="text-2xl font-bold text-ink">Something went wrong</h1>
+      <p className="mt-2 max-w-md text-sm text-muted">{detail}</p>
       <Link
         to="/trades"
-        className="mt-6 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700"
+        className="mt-6 rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-white transition hover:bg-accent-strong"
       >
         Back to safety
       </Link>
