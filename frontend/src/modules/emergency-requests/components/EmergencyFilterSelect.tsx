@@ -2,13 +2,17 @@ import { useEffect, useRef, useState } from "react";
 
 type EmergencyFilterSelectProps = {
   label: string;
+  onChange?: (value: string) => void;
   options?: string[];
+  required?: boolean;
   value: string;
 };
 
 const EmergencyFilterSelect = ({
   label,
+  onChange,
   options = ["Option", "Option", "Option", "Option"],
+  required = false,
   value,
 }: EmergencyFilterSelectProps) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -42,7 +46,10 @@ const EmergencyFilterSelect = ({
 
   return (
     <div className="relative" ref={dropdownRef}>
-      <span className="mb-1.5 block text-sm font-semibold text-[#1D2A44]">{label}</span>
+      <span className="mb-1.5 block text-sm font-semibold text-[#1D2A44]">
+        {label}
+        {required && " *"}
+      </span>
       <button
         className={`flex h-12 w-full items-center justify-between rounded-md border bg-white px-4 text-left text-[#1D2A44] shadow-sm transition ${
           isOpen
@@ -69,7 +76,10 @@ const EmergencyFilterSelect = ({
             <button
               className="block w-full border border-transparent px-4 py-3 text-left text-sm font-medium text-[#1D2A44] transition hover:border-red-300 hover:bg-slate-50 hover:shadow-[0_0_0_2px_rgba(254,226,226,1)]"
               key={`${option}-${index}`}
-              onClick={() => setIsOpen(false)}
+              onClick={() => {
+                onChange?.(option);
+                setIsOpen(false);
+              }}
               type="button"
             >
               {option}

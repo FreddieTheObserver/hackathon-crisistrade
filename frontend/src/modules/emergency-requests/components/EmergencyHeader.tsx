@@ -1,7 +1,12 @@
 import EmergencyActionButton from "./EmergencyActionButton";
 import emergencyLogo from "../assets/EmergencyLogo.png";
+import plusLogo from "../assets/PlusLogo.svg";
 
-const EmergencyHeader = () => {
+type EmergencyHeaderProps = {
+  onAddEmergency: () => void;
+};
+
+const EmergencyHeader = ({ onAddEmergency }: EmergencyHeaderProps) => {
   return (
     <section className="flex items-start justify-between gap-6">
       <div className="flex items-center gap-5">
@@ -15,7 +20,7 @@ const EmergencyHeader = () => {
         </div>
       </div>
 
-      <EmergencyActionButton label="+ Add Emergency" />
+      <EmergencyActionButton iconSrc={plusLogo} label="Add Emergency" onClick={onAddEmergency} />
     </section>
   );
 };
