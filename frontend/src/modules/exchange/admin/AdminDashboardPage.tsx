@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "../../../auth/AuthContext";
 import {
   createExchangePoint,
   deleteExchangePoint,
@@ -65,6 +66,8 @@ const toPayload = (formValues: ExchangePointFormValues): ExchangePointPayload =>
 });
 
 const AdminDashboardPage = () => {
+  const navigate = useNavigate();
+  const { logout } = useAuth();
   const [locations, setLocations] = useState<ExchangePoint[]>([]);
   const [formValues, setFormValues] = useState<ExchangePointFormValues>(emptyFormValues);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -160,6 +163,14 @@ const AdminDashboardPage = () => {
   const closeForm = () => {
     resetForm();
     setIsFormVisible(false);
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await logout();
+    } finally {
+      navigate("/login", { replace: true });
+    }
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -281,12 +292,13 @@ const AdminDashboardPage = () => {
               <div className="text-sm text-emerald-300">Super Admin</div>
             </div>
           </NavLink>
-          <NavLink
-            to="/admin/integration-needed"
+          <button
+            type="button"
+            onClick={() => void handleSignOut()}
             className="mt-6 flex w-full justify-center rounded border border-slate-700 py-2 font-semibold transition hover:bg-slate-800"
           >
             Sign Out
-          </NavLink>
+          </button>
         </div>
       </aside>
 
