@@ -39,8 +39,12 @@ export function TradeCard({
 
       return (
             <article
-                  className={`flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition ${
-                              highlighted ? "ring-2 ring-red-500" : ""
+                  className={`flex flex-col overflow-hidden rounded-lg border bg-white shadow-sm transition ${
+                              highlighted
+                                    ? "border-emerald-500 ring-2 ring-emerald-300"
+                                    : canManage
+                                          ? "border-emerald-500 ring-1 ring-emerald-200"
+                                          : "border-gray-200"
                   }`}
             >
                   <div className="relative h-40 w-full">
