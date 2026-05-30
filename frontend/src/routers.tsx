@@ -1,5 +1,6 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 import App from "./App";
+import { exchangeRoutes } from "./modules/exchange/exchange.routes";
 
 /**
  * Root browser router — Area I (coordinate before editing).
@@ -26,6 +27,7 @@ const mainRouter = createBrowserRouter([
     path: "/",
     element: <App />,
     children: [
+      { index: true, element: <Navigate to="/exchange-points" replace /> },
       // ── Board routes ──────────────────────────────────────────
       // Marketplace Trades  (owner: La Yaung Phyo)                  path: /trades
       // ...marketplaceTradesRoutes,
@@ -37,7 +39,7 @@ const mainRouter = createBrowserRouter([
       // ...emergencyRequestsRoutes,
 
       // Safe Exchange Points  (owner: Saw Thet Wai Yan)             path: /exchange-points
-      // ...exchangePointsRoutes,
+      ...exchangeRoutes,
       // ──────────────────────────────────────────────────────────
     ],
   },

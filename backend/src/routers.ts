@@ -1,4 +1,5 @@
 import { Router } from "express";
+import exchangePointsRouter from "./modules/exchange-points/exchange-points.router";
 
 const mainRouter = Router();
 
@@ -33,8 +34,7 @@ const mainRouter = Router();
 // mainRouter.use("/requests", emergencyRequestsRouter);
 
 // Safe Exchange Points  (owner: Saw Thet Wai Yan)             prefix: /exchange-points
-// import exchangePointsRouter from "./modules/exchange-points/exchange-points.router";
-// mainRouter.use("/exchange-points", exchangePointsRouter);
+mainRouter.use("/exchange-points", exchangePointsRouter);
 // ────────────────────────────────────────────────────────────────
 
 export default mainRouter;

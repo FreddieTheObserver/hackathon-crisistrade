@@ -6,3 +6,14 @@ generator client {
 datasource db {
   provider = "sqlite"
 }
+
+model ExchangePoint {
+  id           String   @id @default(cuid())
+  placeName    String
+  area         String
+  openTime     String
+  notes        String   @default("")
+  contactNotes String   @default("")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
