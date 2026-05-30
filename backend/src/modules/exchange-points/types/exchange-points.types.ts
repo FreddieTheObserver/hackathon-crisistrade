@@ -5,6 +5,8 @@ export type ExchangePointRecord = {
   openTime: string;
   notes: string;
   contactNotes: string;
+  userId: string;
+  ownerName: string;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -16,6 +18,8 @@ export type ExchangePointResponse = {
   openTime: string;
   notes: string;
   contactNotes: string;
+  userId: string;
+  ownerName: string;
   createdAt: string;
   updatedAt: string;
 };

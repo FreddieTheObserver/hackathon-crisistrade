@@ -29,7 +29,12 @@ export const getExchangePointController = async (req: Request, res: Response) =>
 
 export const createExchangePointController = async (req: Request, res: Response) => {
   const payload = exchangePointCreateSchema.parse(req.body);
-  const exchangePoint = await createExchangePoint(payload);
+  const user = req.user!;
+  const exchangePoint = await createExchangePoint({
+    ...payload,
+    userId: user.id,
+    ownerName: user.displayName,
+  });
 
   res.status(201).json(exchangePoint);
 };
@@ -37,7 +42,7 @@ export const createExchangePointController = async (req: Request, res: Response)
 export const updateExchangePointController = async (req: Request, res: Response) => {
   const { id } = idParamSchema.parse(req.params);
   const payload = exchangePointUpdateSchema.parse(req.body);
-  const exchangePoint = await updateExchangePoint(id, payload);
+  const exchangePoint = await updateExchangePoint(id, req.user!.id, payload);
 
   res.json(exchangePoint);
 };
@@ -45,7 +50,7 @@ export const updateExchangePointController = async (req: Request, res: Response)
 export const deleteExchangePointController = async (req: Request, res: Response) => {
   const { id } = idParamSchema.parse(req.params);
 
-  await deleteExchangePoint(id);
+  await deleteExchangePoint(id, req.user!.id);
 
   res.json({ message: "Exchange point deleted" });
 };
