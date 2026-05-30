@@ -4,6 +4,7 @@ import {
   registerUser,
   authenticateUser,
   signToken,
+  getAuthUserById,
   getReputationPoints,
 } from "../services/auth.service";
 
@@ -41,7 +42,7 @@ export async function logout(_req: Request, res: Response) {
 
 export async function me(req: Request, res: Response) {
   // requireAuth guarantees req.user is set.
-  const user = req.user!;
+  const user = await getAuthUserById(req.user!.id);
   const reputationPoints = await getReputationPoints(user.id);
   res.json({ user: { ...user, reputationPoints } });
 }

@@ -12,8 +12,19 @@ function httpError(status: number, message: string): never {
   throw Object.assign(new Error(message), { status });
 }
 
-function toAuthUser(u: { id: string; email: string; displayName: string; role: string }): AuthUser {
-  return { id: u.id, email: u.email, displayName: u.displayName, role: u.role };
+async function toAuthUser(u: { id: string; email: string; displayName: string; role: string }): Promise<AuthUser> {
+  const profile = await prisma.userProfile.findUnique({
+    select: { profilePhotoUrl: true },
+    where: { userId: u.id },
+  });
+
+  return {
+    id: u.id,
+    email: u.email,
+    displayName: u.displayName,
+    profilePhotoUrl: profile?.profilePhotoUrl ?? "",
+    role: u.role,
+  };
 }
 
 export function signToken(user: AuthUser): string {
@@ -26,6 +37,7 @@ export function verifyToken(token: string): AuthUser {
     id: decoded.id,
     email: decoded.email,
     displayName: decoded.displayName,
+    profilePhotoUrl: decoded.profilePhotoUrl ?? "",
     role: decoded.role ?? "user",
   };
 }
@@ -49,7 +61,13 @@ export async function registerUser(input: {
   const user = await prisma.user.create({
     data: { email: input.email, displayName: input.displayName, passwordHash },
   });
-  return toAuthUser(user);
+  return {
+    id: user.id,
+    email: user.email,
+    displayName: user.displayName,
+    profilePhotoUrl: "",
+    role: user.role,
+  };
 }
 
 export async function authenticateUser(input: {
@@ -66,4 +84,10 @@ export async function authenticateUser(input: {
 export async function getReputationPoints(userId: string): Promise<number> {
   const trader = await prisma.trader.findUnique({ where: { userId } });
   return trader?.reputationPoints ?? 0;
+}
+
+export async function getAuthUserById(userId: string): Promise<AuthUser> {
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+  if (!user) httpError(404, "User not found");
+  return toAuthUser(user);
 }

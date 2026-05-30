@@ -14,6 +14,7 @@ const authUserSchema = z.object({
   id: z.string(),
   email: z.string(),
   displayName: z.string(),
+  profilePhotoUrl: z.string().optional().default(""),
   role: z.string(),
   reputationPoints: z.number().optional(),
 });

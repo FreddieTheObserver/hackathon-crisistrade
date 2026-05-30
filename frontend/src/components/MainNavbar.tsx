@@ -125,7 +125,7 @@ export const MainNavbar = () => {
             to="/profile"
             className={({ isActive }) =>
               [
-                "flex h-10 w-10 items-center justify-center rounded-full border text-sm font-bold shadow-sm transition-colors duration-200",
+                "flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border text-sm font-bold shadow-sm transition-colors duration-200",
                 isActive
                   ? "border-blue-300 bg-blue-600 text-white"
                   : "border-blue-200 bg-blue-100 text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800",
@@ -134,7 +134,17 @@ export const MainNavbar = () => {
             aria-label={user ? `Profile — ${user.displayName}` : "Profile"}
             title={user?.displayName}
           >
-            {user ? initialsOf(user.displayName) : "?"}
+            {user?.profilePhotoUrl ? (
+              <img
+                alt={`${user.displayName} profile`}
+                className="h-full w-full rounded-full object-cover"
+                src={user.profilePhotoUrl}
+              />
+            ) : user ? (
+              initialsOf(user.displayName)
+            ) : (
+              "?"
+            )}
           </NavLink>
 
           <button
