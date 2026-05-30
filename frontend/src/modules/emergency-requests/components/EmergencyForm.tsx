@@ -5,7 +5,6 @@ import EmergencyFilterSelect from "./EmergencyFilterSelect";
 import EmergencyFormInput from "./EmergencyFormInput";
 import EmergencyIcon from "./EmergencyIcon";
 import EmergencyUploadButton from "./EmergencyUploadButton";
-import EmergencyUploadModal from "./EmergencyUploadModal";
 import plusLogo from "../assets/PlusLogo.svg";
 import type { EmergencyFormPayload, EmergencyPost, EmergencyUrgency } from "../types/emergency.type";
 
@@ -60,7 +59,6 @@ const getInitialValues = (post?: EmergencyPost | null): EmergencyFormValues => {
 };
 
 const EmergencyForm = ({ editingPost, onClose, onSubmit }: EmergencyFormProps) => {
-  const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [values, setValues] = useState<EmergencyFormValues>(() => getInitialValues(editingPost));
   const [showRequiredErrors, setShowRequiredErrors] = useState(false);
 
@@ -183,7 +181,7 @@ const EmergencyForm = ({ editingPost, onClose, onSubmit }: EmergencyFormProps) =
           <label className="block">
             <span className="mb-2 block text-sm font-semibold text-emerald-900">Photo</span>
             <EmergencyUploadButton
-              onClick={() => setIsUploadOpen(true)}
+              onFileSelected={(photoUrl) => updateValue("photoUrl", photoUrl)}
               onRemove={removePhoto}
               previewUrl={values.photoUrl}
             />
@@ -219,12 +217,7 @@ const EmergencyForm = ({ editingPost, onClose, onSubmit }: EmergencyFormProps) =
           <EmergencyActionButton label="Post Emergency" type="submit" />
         </div>
       </form>
-      {isUploadOpen && (
-        <EmergencyUploadModal
-          onClose={() => setIsUploadOpen(false)}
-          onUpload={(photoUrl) => updateValue("photoUrl", photoUrl)}
-        />
-      )}
+      {/* modal removed: upload handled directly by EmergencyUploadButton */}
     </section>
   );
 };

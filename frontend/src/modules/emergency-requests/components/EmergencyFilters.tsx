@@ -26,7 +26,7 @@ const EmergencyFilters = ({ locationOptions, onChange, values }: EmergencyFilter
 
   return (
     <section className="grid gap-5 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,0.85fr)_minmax(0,0.85fr)_minmax(0,0.85fr)_auto]">
-      <div className="lg:pt-[29px]">
+      <div className="lg:flex lg:items-end">
         <EmergencySearchInput
           onChange={(value) => updateFilter("search", value)}
           placeholder="Search emergency by item, keyword, or location..."
@@ -51,7 +51,7 @@ const EmergencyFilters = ({ locationOptions, onChange, values }: EmergencyFilter
         options={["All Status", "Open", "Helped"]}
         value={values.status}
       />
-      <div className="lg:w-36 lg:pt-[29px]">
+      <div className="lg:w-36 lg:flex lg:items-end">
         <EmergencyClearFiltersButton
           onClick={() =>
             onChange({
