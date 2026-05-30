@@ -9,11 +9,12 @@ import {
   listDonations,
   updateDonation,
 } from "../services/donations.service";
+import { isAdmin } from "../../../middlewares/require-auth";
 
-// Derive the donations service's expected { id, name } from the session user.
+// Derive the donations service's expected user shape from the session user.
 function currentUser(req: Request) {
   const u = req.user!;
-  return { id: u.id, name: u.displayName };
+  return { id: u.id, name: u.displayName, isAdmin: isAdmin(u) };
 }
 
 // error with status code

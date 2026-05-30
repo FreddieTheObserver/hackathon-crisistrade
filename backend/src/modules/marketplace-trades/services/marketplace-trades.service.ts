@@ -58,12 +58,14 @@ export async function createTrade(input: CreateTradeData) {
  * "completed". Wrapped in a $transaction so the trade update and both Trader
  * upserts commit together.
  */
-export async function updateTradeWithReputation(id: string, userId: string, patch: UpdateTradeData) {
+type Actor = { id: string; isAdmin: boolean };
+
+export async function updateTradeWithReputation(id: string, actor: Actor, patch: UpdateTradeData) {
       return prisma.$transaction(async (tx) => {
             const existing = await tx.trade.findUnique({ where: { id } });
             if (!existing) notFound();
 
-            if (existing.userId !== userId) {
+            if (existing.userId !== actor.id && !actor.isAdmin) {
                   throw Object.assign(new Error("You can only modify your own trades."), { status: 403 });
             }
 
@@ -86,11 +88,12 @@ export async function updateTradeWithReputation(id: string, userId: string, patc
             });
 
             if (becomingCompleted) {
-                  // Owner side links its reputation Trader to the real account.
+                  // Reputation always credits the trade's owner (never the actor,
+                  // which may be a moderating admin) and links to that account.
                   await tx.trader.upsert({
                         where: { name: ownerName },
-                        create: { name: ownerName, userId, reputationPoints: 1 },
-                        update: { userId, reputationPoints: { increment: 1 } },
+                        create: { name: ownerName, userId: existing.userId, reputationPoints: 1 },
+                        update: { userId: existing.userId, reputationPoints: { increment: 1 } },
                   });
                   // Counterparty stays by-name (typed); no user account linked.
                   // counterparty is guaranteed present here (checked above).
@@ -105,9 +108,9 @@ export async function updateTradeWithReputation(id: string, userId: string, patc
       });
 }
 
-export async function deleteTrade(id: string, userId: string) {
+export async function deleteTrade(id: string, actor: Actor) {
       const trade = await getTradeById(id); // throws 404 if it doesn't exist
-      if (trade.userId !== userId) {
+      if (trade.userId !== actor.id && !actor.isAdmin) {
             throw Object.assign(new Error("You can only delete your own trades."), { status: 403 });
       }
       await prisma.trade.delete({ where: { id } });

@@ -11,6 +11,7 @@ import {
   emergencyIdParamSchema,
   updateEmergencySchema,
 } from "../schemas/emergency.schema";
+import { isAdmin } from "../../../middlewares/require-auth";
 
 const toEmergencyResponse = (emergency: Awaited<ReturnType<typeof createEmergency>>) => ({
   ...emergency,
@@ -36,14 +37,14 @@ export const postEmergency = async (req: Request, res: Response) => {
 export const patchEmergency = async (req: Request, res: Response) => {
   const { id } = emergencyIdParamSchema.parse(req.params);
   const data = updateEmergencySchema.parse(req.body);
-  const emergency = await updateEmergency(id, req.user!.id, data);
+  const emergency = await updateEmergency(id, { id: req.user!.id, isAdmin: isAdmin(req.user) }, data);
 
   res.json({ emergency: toEmergencyResponse(emergency) });
 };
 
 export const patchEmergencyHelped = async (req: Request, res: Response) => {
   const { id } = emergencyIdParamSchema.parse(req.params);
-  const emergency = await markEmergencyHelped(id, req.user!.id);
+  const emergency = await markEmergencyHelped(id, { id: req.user!.id, isAdmin: isAdmin(req.user) });
 
   res.json({ emergency: toEmergencyResponse(emergency) });
 };
@@ -51,6 +52,6 @@ export const patchEmergencyHelped = async (req: Request, res: Response) => {
 export const removeEmergency = async (req: Request, res: Response) => {
   const { id } = emergencyIdParamSchema.parse(req.params);
 
-  await deleteEmergency(id, req.user!.id);
+  await deleteEmergency(id, { id: req.user!.id, isAdmin: isAdmin(req.user) });
   res.json({ message: "Emergency request deleted" });
 };

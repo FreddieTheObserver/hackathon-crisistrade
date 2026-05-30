@@ -13,32 +13,34 @@ export const createEmergency = async (
   return prisma.emergencyRequest.create({ data });
 };
 
-async function getOwned(id: string, userId: string) {
+type Actor = { id: string; isAdmin: boolean };
+
+async function getOwned(id: string, actor: Actor) {
   const existing = await prisma.emergencyRequest.findUnique({ where: { id } });
   if (!existing) throw Object.assign(new Error("Emergency request not found"), { status: 404 });
-  if (existing.userId !== userId)
+  if (existing.userId !== actor.id && !actor.isAdmin)
     throw Object.assign(new Error("You can only modify your own requests."), { status: 403 });
   return existing;
 }
 
-export const updateEmergency = async (id: string, userId: string, data: UpdateEmergencyInput) => {
-  await getOwned(id, userId);
+export const updateEmergency = async (id: string, actor: Actor, data: UpdateEmergencyInput) => {
+  await getOwned(id, actor);
   return prisma.emergencyRequest.update({
     data,
     where: { id },
   });
 };
 
-export const markEmergencyHelped = async (id: string, userId: string) => {
-  await getOwned(id, userId);
+export const markEmergencyHelped = async (id: string, actor: Actor) => {
+  await getOwned(id, actor);
   return prisma.emergencyRequest.update({
     data: { status: "Helped" },
     where: { id },
   });
 };
 
-export const deleteEmergency = async (id: string, userId: string) => {
-  await getOwned(id, userId);
+export const deleteEmergency = async (id: string, actor: Actor) => {
+  await getOwned(id, actor);
   return prisma.emergencyRequest.delete({
     where: { id },
   });

@@ -86,9 +86,11 @@ export const createExchangePoint = async (
   return toResponse(exchangePoint);
 };
 
+type Actor = { id: string; isAdmin: boolean };
+
 export const updateExchangePoint = async (
   id: string,
-  userId: string,
+  actor: Actor,
   payload: ExchangePointUpdateInput
 ): Promise<ExchangePointResponse> => {
   const existingExchangePoint = await prisma.exchangePoint.findUnique({ where: { id } });
@@ -97,7 +99,7 @@ export const updateExchangePoint = async (
     throw createNotFoundError();
   }
 
-  if (existingExchangePoint.userId !== userId) {
+  if (existingExchangePoint.userId !== actor.id && !actor.isAdmin) {
     throw createForbiddenError();
   }
 
@@ -109,14 +111,14 @@ export const updateExchangePoint = async (
   return toResponse(exchangePoint);
 };
 
-export const deleteExchangePoint = async (id: string, userId: string): Promise<void> => {
+export const deleteExchangePoint = async (id: string, actor: Actor): Promise<void> => {
   const existingExchangePoint = await prisma.exchangePoint.findUnique({ where: { id } });
 
   if (!existingExchangePoint) {
     throw createNotFoundError();
   }
 
-  if (existingExchangePoint.userId !== userId) {
+  if (existingExchangePoint.userId !== actor.id && !actor.isAdmin) {
     throw createForbiddenError();
   }
 
