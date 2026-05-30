@@ -6,7 +6,8 @@ import { emergencyRoutes } from "./modules/emergency-requests/routers/emergency.
 import { exchangeRoutes } from "./modules/exchange/exchange.routes";
 import { profileRoutes } from "./modules/profile/routers/profile.routes";
 import { LoginPage } from "./pages/LoginPage";
-
+import { SignupPage } from "./pages/SignupPage";
+import ProtectedRoute from "./middlewares/ProtectedRoute";
 
 /**
  * Root browser router — Area I (coordinate before editing).
@@ -30,11 +31,18 @@ import { LoginPage } from "./pages/LoginPage";
 
 const mainRouter = createBrowserRouter([
   { path: "/login",
-    element: <LoginPage /> 
+    element: <LoginPage />
+  },
+  { path: "/signup",
+    element: <SignupPage />
   },
   {
     path: "/",
-    element: <App />,
+    element: (
+      <ProtectedRoute>
+        <App />
+      </ProtectedRoute>
+    ),
     children: [
       { index: true, element: <Navigate to="/trades" replace /> },
       // ── Board routes ──────────────────────────────────────────

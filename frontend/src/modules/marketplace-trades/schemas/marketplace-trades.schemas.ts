@@ -29,6 +29,7 @@ export const tradeSchema = z.object({
       id: z.string(),
       title: z.string(),
       ownerName: z.string(),
+      userId: z.string(),
       offering: z.string(),
       wanting: z.string(),
       itemType: z.enum(ITEM_TYPES),

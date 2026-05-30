@@ -2,6 +2,7 @@ import type { Trade, ItemType, Status } from '../types/marketplace-trades.types'
 import { STATUSES } from '../schemas/marketplace-trades.schemas';
 import { StatusBadge } from './StatusBadge';
 import { timeAgo } from '../lib/timeAgo';
+import { useCanManage } from '../../../auth/AuthContext';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -32,6 +33,9 @@ export function TradeCard({
       onStatusChange,
 }: TradeCardProps) {
       const photoSrc = trade.photoUrl ? `${API_URL}${trade.photoUrl}` : null
+      // Only the owner (or an admin) may change status / edit / delete; the
+      // backend enforces this too (403 otherwise), this just hides dead controls.
+      const canManage = useCanManage(trade.userId)
 
       return (
             <article
@@ -86,36 +90,38 @@ export function TradeCard({
                         <span className="shrink-0 text-xs text-gray-400">{timeAgo(trade.createdAt)}</span>
                   </div>
 
-                  <div className="flex items-center gap-2 border-t border-gray-100 px-4 py-3">
-                        <select
-                              value={trade.status}
-                              onChange={(e) => onStatusChange(trade, e.target.value as Status)}
-                              className="rounded-md border border-gray-300 px-2 py-1 text-xs text-gray-700 focus:border-green-500 focus:outline-none"
-                        >
-                              {STATUSES.map((status) => (
-                                    <option key={status} value={status}>
-                                          {status}
-                                    </option>
-                              ))}
-                        </select>
+                  {canManage && (
+                        <div className="flex items-center gap-2 border-t border-gray-100 px-4 py-3">
+                              <select
+                                    value={trade.status}
+                                    onChange={(e) => onStatusChange(trade, e.target.value as Status)}
+                                    className="rounded-md border border-gray-300 px-2 py-1 text-xs text-gray-700 focus:border-green-500 focus:outline-none"
+                              >
+                                    {STATUSES.map((status) => (
+                                          <option key={status} value={status}>
+                                                {status}
+                                          </option>
+                                    ))}
+                              </select>
 
-                        <div className="ml-auto flex gap-2">
-                              <button
-                                    type="button"
-                                    onClick={() => onEdit(trade)}
-                                    className="rounded-md border border-gray-300 px-3 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50"
-                              >
-                                    Edit
-                              </button>
-                              <button
-                                    type="button"
-                                    onClick={() => onDelete(trade)}
-                                    className="rounded-md border border-red-200 px-3 py-1 text-xs font-medium text-red-600 hover:bg-red-50"
-                              >
-                                    Delete
-                              </button>
+                              <div className="ml-auto flex gap-2">
+                                    <button
+                                          type="button"
+                                          onClick={() => onEdit(trade)}
+                                          className="rounded-md border border-gray-300 px-3 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50"
+                                    >
+                                          Edit
+                                    </button>
+                                    <button
+                                          type="button"
+                                          onClick={() => onDelete(trade)}
+                                          className="rounded-md border border-red-200 px-3 py-1 text-xs font-medium text-red-600 hover:bg-red-50"
+                                    >
+                                          Delete
+                                    </button>
+                              </div>
                         </div>
-                  </div>
+                  )}
             </article>
       )
 }
