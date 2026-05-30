@@ -1,5 +1,6 @@
 import "dotenv/config";
 import express from "express";
+import path from "node:path";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import mainRouter from "./routers";
@@ -17,6 +18,9 @@ app.use(
     credentials: true,
   })
 );
+
+// serve marketplace trades photo uploads (matches multer's uploadDir)
+app.use('/uploads', express.static(path.resolve(process.cwd(), 'uploads')));
 
 app.use("", mainRouter);
 

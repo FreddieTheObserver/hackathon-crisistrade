@@ -21,8 +21,8 @@ const mainRouter = Router();
 
 // ── Board mounts ────────────────────────────────────────────────
 // Marketplace Trades  (owner: La Yaung Phyo)                  prefix: /trades
-// import marketplaceTradesRouter from "./modules/marketplace-trades/marketplace-trades.router";
-// mainRouter.use("/trades", marketplaceTradesRouter);
+import marketplaceTradesRouter from "./modules/marketplace-trades/marketplace-trades.router";
+mainRouter.use("/trades", marketplaceTradesRouter);
 
 // Donations  (owner: Eaint Myat Noe)                          prefix: /donations
 // import donationsRouter from "./modules/donations/donations.router";
