@@ -1,4 +1,4 @@
-import { Outlet, Link } from "react-router-dom";
+import { Outlet, Link, NavLink } from "react-router-dom";
 
 const App = () => {
   return (
@@ -8,7 +8,16 @@ const App = () => {
           <Link to="/" className="text-xl font-bold">
             crisistrade
           </Link>
-          <nav className="flex gap-4 text-sm text-gray-600"></nav>
+          <nav className="flex gap-4 text-sm text-gray-600">
+            <NavLink
+              to="/trades"
+              className={({ isActive }) =>
+                isActive ? "font-medium text-green-700" : "hover:text-gray-900"
+              }
+          >
+            Trades
+          </NavLink>
+          </nav>
         </div>
       </header>
       <main className="flex-1">

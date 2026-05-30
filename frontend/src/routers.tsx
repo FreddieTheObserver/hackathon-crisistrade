@@ -1,5 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import App from "./App";
+import { marketplaceTradesRoutes } from "./modules/marketplace-trades/marketplace-trades.routes";
 
 /**
  * Root browser router — Area I (coordinate before editing).
@@ -28,7 +29,7 @@ const mainRouter = createBrowserRouter([
     children: [
       // ── Board routes ──────────────────────────────────────────
       // Marketplace Trades  (owner: La Yaung Phyo)                  path: /trades
-      // ...marketplaceTradesRoutes,
+      ...marketplaceTradesRoutes,
 
       // Donations  (owner: Eaint Myat Noe)                          path: /donations
       // ...donationsRoutes,
