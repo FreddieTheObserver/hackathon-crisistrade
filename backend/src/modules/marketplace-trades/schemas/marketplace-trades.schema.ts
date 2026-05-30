@@ -1,40 +1,40 @@
-import { z } from 'zod';
+import { z } from "zod";
 
-export const tradeStatusSchema = z.enum([
-      "available",
-      "pending exchange",
-      "completed",
-      "unavailable",
-]);
+// SQLite has no enums — these const arrays are the single source of truth,
+// reused by Zod (.enum) here and surfaced to the frontend as option lists.
+export const ITEM_TYPES = ["water", "food", "medicine", "batteries", "shelter", "tools", "other"] as const;
+export const URGENCIES = ["low", "medium", "high", "critical"] as const;
+export const STATUSES = ["available", "pending", "completed", "unavailable"] as const;
 
-export const tradeUrgencySchema = z.enum(["low", "medium", "high"]);
-
-const tradeFields = z.object({
-      has: z.string().trim().min(1, "Required").max(200),
-      wants: z.string().trim().min(1, "Required").max(200),
-      area: z.string().trim().min(1, "Required").max(120),
-      urgency: tradeUrgencySchema.default("medium"),
-      contactNotes: z.string().trim().max(500).optional(),
+export const createTradeSchema = z.object({
+      title: z.string().trim().min(1).max(120),
+      ownerName: z.string().trim().min(1).max(80),
+      offering: z.string().trim().min(1).max(200),
+      wanting: z.string().trim().min(1).max(200),
+      itemType: z.enum(ITEM_TYPES),
+      urgency: z.enum(URGENCIES),
+      area: z.string().trim().min(1).max(120),
+      contact: z.string().trim().min(1).max(60),
+      note: z.string().trim().max(500).optional(),
+      status: z.enum(STATUSES).default("available"),
+      counterparty: z.string().trim().min(1).max(80).optional(),
 });
 
-export const createTradeSchema = tradeFields.extend({
-      ownerName: z.string().trim().min(1, "Required").max(80),
-});
-
-export const updateTradeSchema = tradeFields.partial().extend({
-      status: tradeStatusSchema.optional(),
-});
+export const updateTradeSchema = createTradeSchema.partial();
 
 export const listTradesQuerySchema = z.object({
       area: z.string().trim().min(1).optional(),
-      urgency: tradeUrgencySchema.optional(),
-      status: tradeStatusSchema.optional(),
+      urgency: z.enum(URGENCIES).optional(),
+      itemType: z.enum(ITEM_TYPES).optional(),
+      status: z.enum(STATUSES).optional(),
+      search: z.string().trim().min(1).optional(), // contains-match on title/offering/wanting/note
 });
 
+// cuid string ids (no longer numeric)
 export const tradeIdParamSchema = z.object({
-      id: z.coerce.number().int().positive(),
+      id: z.string().trim().min(1),
 });
 
-export type CreateTradeInput = z.infer<typeof createTradeSchema>;
-export type UpdateTradeInput = z.infer<typeof updateTradeSchema>;
-export type ListTradesQuery = z.infer<typeof listTradesQuerySchema>;
+export const traderNameParamSchema = z.object({
+      name: z.string().trim().min(1),
+});
