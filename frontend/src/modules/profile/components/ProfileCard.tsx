@@ -103,7 +103,7 @@ export const ProfileCard = ({
 
       <div className="my-8 border-t border-slate-400" />
 
-      <div className="mx-auto max-w-md space-y-4 text-base text-[#1F2A44]">
+      <div className="mx-auto max-w-md space-y-4 text-left text-base text-[#1F2A44]">
         <ProfileInfoRow icon={<PhoneIcon />}>
           {isEditing ? (
             <input

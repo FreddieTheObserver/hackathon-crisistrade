@@ -1,37 +1,14 @@
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { ZodError } from "zod";
 
+import { useAuth } from "../../../auth/AuthContext";
 import { getMyProfile, updateMyProfile } from "../apis/profile.api";
 import { ProfileCard } from "../components/ProfileCard";
 import { ProfileReputationPanel } from "../components/ProfileReputationPanel";
 import { ProfileStatsGrid } from "../components/ProfileStatsGrid";
 import type { ProfileInfo } from "../types/profile.type";
-
-const initialProfile: ProfileInfo = {
-  bio: "Community volunteer focused on helping families access essential resources during emergencies.",
-  email: "arjun.kumar@example.com",
-  isVerified: true,
-  location: "Kathmandu",
-  memberSince: "Jan 2023",
-  name: "Arjun Kumar",
-  phone: "98105430",
-  profilePhotoUrl: "",
-  reputationPoints: 1250,
-  stats: {
-    donations: {
-      finished: 6,
-      total: 9,
-    },
-    requests: {
-      helped: 8,
-      total: 15,
-    },
-    trades: {
-      completed: 12,
-      total: 28,
-    },
-  },
-};
 
 const inputClass =
   "w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-base font-medium text-[#1F2A44] shadow-sm outline-none transition focus:border-emerald-300 focus:ring-2 focus:ring-emerald-100";
@@ -59,35 +36,73 @@ const getProfileValidationMessage = (profile: ProfileInfo) => {
   return "";
 };
 
+const getProfileSaveErrorMessage = (error: unknown) => {
+  if (error instanceof ZodError) {
+    return error.issues[0]?.message ?? "Profile input is invalid.";
+  }
+
+  if (axios.isAxiosError(error)) {
+    const data = error.response?.data as { issues?: { message?: string }[]; message?: string } | undefined;
+
+    if (data?.issues?.[0]?.message) {
+      return data.issues[0].message;
+    }
+
+    if (data?.message) {
+      return data.message;
+    }
+  }
+
+  return "Profile could not be saved. Please check the fields and try again.";
+};
+
 export const ProfilePage = () => {
-  const [profile, setProfile] = useState<ProfileInfo>(initialProfile);
-  const [draftProfile, setDraftProfile] = useState<ProfileInfo>(initialProfile);
+  const [profile, setProfile] = useState<ProfileInfo | null>(null);
+  const [draftProfile, setDraftProfile] = useState<ProfileInfo | null>(null);
   const [profileError, setProfileError] = useState("");
   const [isEditing, setIsEditing] = useState(false);
+  const navigate = useNavigate();
+  const { logout: logoutSession, setUser } = useAuth();
   const profilePhotoInputRef = useRef<HTMLInputElement>(null);
 
   const visibleProfile = isEditing ? draftProfile : profile;
-  const initials = getInitials(visibleProfile.name);
+  const initials = getInitials(visibleProfile?.name ?? "");
 
   const updateDraft = (field: keyof ProfileInfo, value: string) => {
+    if (!draftProfile) {
+      return;
+    }
+
     setDraftProfile((currentProfile) => ({
-      ...currentProfile,
+      ...currentProfile!,
       [field]: value,
     }));
   };
 
   const startEditing = () => {
+    if (!profile) {
+      return;
+    }
+
     setProfileError("");
     setDraftProfile(profile);
     setIsEditing(true);
   };
 
   const cancelEditing = () => {
+    if (!profile) {
+      return;
+    }
+
     setDraftProfile(profile);
     setIsEditing(false);
   };
 
   const saveProfile = async () => {
+    if (!draftProfile) {
+      return;
+    }
+
     setProfileError("");
 
     const validationMessage = getProfileValidationMessage(draftProfile);
@@ -112,7 +127,8 @@ export const ProfilePage = () => {
       window.dispatchEvent(new Event("auth-changed"));
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 401) {
-        setProfileError("Your login session expired. Please log in again.");
+        setUser(null);
+        navigate("/login", { replace: true });
         return;
       }
 
@@ -121,7 +137,7 @@ export const ProfilePage = () => {
         return;
       }
 
-      setProfileError("Profile could not be saved. Please check the required fields.");
+      setProfileError(getProfileSaveErrorMessage(error));
     }
   };
 
@@ -147,6 +163,18 @@ export const ProfilePage = () => {
     reader.readAsDataURL(file);
   };
 
+  const handleLogout = async () => {
+    setProfileError("");
+
+    try {
+      await logoutSession();
+      window.dispatchEvent(new Event("auth-changed"));
+      navigate("/login", { replace: true });
+    } catch {
+      setProfileError("Logout failed. Please try again.");
+    }
+  };
+
   useEffect(() => {
     let isActive = true;
 
@@ -159,9 +187,15 @@ export const ProfilePage = () => {
           setDraftProfile(loadedProfile);
           setProfileError("");
         }
-      } catch {
+      } catch (error) {
         if (isActive) {
-          setProfileError("Using demo profile until you log in.");
+          if (axios.isAxiosError(error) && error.response?.status === 401) {
+            setUser(null);
+            navigate("/login", { replace: true });
+            return;
+          }
+
+          setProfileError("Profile could not be loaded. Please try again.");
         }
       }
     };
@@ -171,40 +205,58 @@ export const ProfilePage = () => {
     return () => {
       isActive = false;
     };
-  }, []);
+  }, [navigate, setUser]);
 
   return (
     <main className="min-h-[calc(100vh-73px)] bg-slate-50">
       <div className="mx-auto max-w-7xl px-6 pb-12 pt-6">
-        <header>
-          <h1 className="text-4xl font-bold text-[#1F2A44]">My Profile</h1>
-          <p className="mt-4 text-base text-[#1F2A44]">Manage your account and update your preferences.</p>
-          {profileError ? <p className="mt-3 text-sm font-semibold text-red-500">{profileError}</p> : null}
+        <header className="flex items-start justify-between gap-6">
+          <div>
+            <h1 className="text-4xl font-bold text-[#1F2A44]">My Profile</h1>
+            <p className="mt-4 text-base text-[#1F2A44]">Manage your account and update your preferences.</p>
+            {profileError ? <p className="mt-3 text-sm font-semibold text-red-500">{profileError}</p> : null}
+          </div>
+
+          {profile ? (
+            <button
+              className="mt-2 rounded-lg border border-red-200 bg-white px-5 py-2.5 text-sm font-semibold text-red-600 shadow-sm transition hover:border-red-300 hover:bg-red-50 hover:ring-2 hover:ring-red-100"
+              onClick={handleLogout}
+              type="button"
+            >
+              Log Out
+            </button>
+          ) : null}
         </header>
 
-        <section className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(360px,0.95fr)]">
-          <ProfileCard
-            draftProfile={draftProfile}
-            initials={initials}
-            inputClass={inputClass}
-            isEditing={isEditing}
-            memberSince={profile.memberSince}
-            onCancelEditing={cancelEditing}
-            onPhotoChange={updateProfilePhoto}
-            onPhotoPickerOpen={openProfilePhotoPicker}
-            onSaveProfile={saveProfile}
-            onStartEditing={startEditing}
-            onUpdateDraft={updateDraft}
-            photoInputRef={profilePhotoInputRef}
-            profile={profile}
-            visibleProfile={visibleProfile}
-          />
+        {profile && draftProfile && visibleProfile ? (
+          <section className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(360px,0.95fr)]">
+            <ProfileCard
+              draftProfile={draftProfile}
+              initials={initials}
+              inputClass={inputClass}
+              isEditing={isEditing}
+              memberSince={profile.memberSince}
+              onCancelEditing={cancelEditing}
+              onPhotoChange={updateProfilePhoto}
+              onPhotoPickerOpen={openProfilePhotoPicker}
+              onSaveProfile={saveProfile}
+              onStartEditing={startEditing}
+              onUpdateDraft={updateDraft}
+              photoInputRef={profilePhotoInputRef}
+              profile={profile}
+              visibleProfile={visibleProfile}
+            />
 
-          <div className="space-y-8">
-            <ProfileReputationPanel isVerified={profile.isVerified} reputationPoints={profile.reputationPoints} />
-            <ProfileStatsGrid stats={profile.stats} />
+            <div className="space-y-8">
+              <ProfileReputationPanel isVerified={profile.isVerified} reputationPoints={profile.reputationPoints} />
+              <ProfileStatsGrid stats={profile.stats} />
+            </div>
+          </section>
+        ) : (
+          <div className="mt-8 rounded-lg border border-slate-200 bg-white px-6 py-8 text-sm font-medium text-slate-500 shadow-sm">
+            Loading profile...
           </div>
-        </section>
+        )}
       </div>
     </main>
   );
