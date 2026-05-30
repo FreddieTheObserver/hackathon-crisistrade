@@ -7,26 +7,30 @@ datasource db {
   provider = "sqlite"
 }
 
-model Trader {
-  id    Int   @id @default(autoincrement())
-  name  String  @unique
-  reputation  Int @default(0)
-  createdAt DateTime  @default(now())
-
-  trades  Trade[]
+// ── Marketplace Trades (owner: La Yaung Phyo) ──────────────────────
+model Trade {
+  id                String   @id @default(cuid())
+  title             String
+  ownerName         String                          // author / reputation owner (plain string, no auth)
+  offering          String                          // offer + qty, e.g. "Rice (20 kg)"
+  wanting           String                          // want + qty, e.g. "Blankets (5)"
+  itemType          String                          // water|food|medicine|batteries|shelter|tools|other
+  urgency           String                          // low|medium|high|critical
+  area              String                          // location, e.g. "Kathmandu, Bagmati"
+  contact           String                          // phone / contact (required)
+  note              String?
+  photoUrl          String?                         // /uploads/<file>, set by multer
+  status            String   @default("available")  // available|pending|completed|unavailable
+  counterparty      String?                         // required when status -> completed
+  reputationAwarded Boolean  @default(false)        // one-time idempotency guard
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 }
 
-model Trade {
-  id    Int     @id @default(autoincrement())
-  has   String  
-  wants String 
-  area  String 
-  urgency String  @default("medium")
-  contanctNotes   String?
-  status  String  @default("available")
-  createdAt  DateTime   @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  owner Trader @relation(fields: [ownerId], references: [id])
-  ownerId Int
+model Trader {
+  id               String   @id @default(cuid())
+  name             String   @unique                 // by-name link to Trade.ownerName / counterparty (no FK)
+  reputationPoints Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 }
