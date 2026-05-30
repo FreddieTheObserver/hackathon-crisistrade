@@ -3,7 +3,7 @@ import type { CreateEmergencyInput, UpdateEmergencyInput } from "../schemas/emer
 
 export const listEmergencies = async () => {
   return prisma.emergencyRequest.findMany({
-    orderBy: [{ isOwner: "desc" }, { createdAt: "desc" }],
+    orderBy: { createdAt: "desc" },
   });
 };
 
