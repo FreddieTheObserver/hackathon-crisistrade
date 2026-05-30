@@ -4,7 +4,7 @@ import { marketplaceTradesRoutes } from "./modules/marketplace-trades/marketplac
 import { DonationsPage } from "./modules/donations/DonationsPage";
 import { emergencyRoutes } from "./modules/emergency-requests/routers/emergency.routes";
 import { exchangeRoutes } from "./modules/exchange/exchange.routes";
-import { profileRoutes } from "./modules/profile/profile.routes";
+import { profileRoutes } from "./modules/profile/routers/profile.routes";
 
 /**
  * Root browser router — Area I (coordinate before editing).

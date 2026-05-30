@@ -3,6 +3,7 @@ import authRouter from "./modules/auth/auth.router";
 import { donationsRouter } from "./modules/donations/donations.routers";
 import emergencyRouter from "./modules/emergency-requests/routers/emergency.router";
 import exchangePointsRouter from "./modules/exchange-points/exchange-points.router";
+import profileRouter from "./modules/profile/routers/profile.router";
 
 const mainRouter = Router();
 
@@ -43,6 +44,7 @@ mainRouter.use("/requests", emergencyRouter);
 
 // Safe Exchange Points  (owner: Saw Thet Wai Yan)             prefix: /exchange-points
 mainRouter.use("/exchange-points", exchangePointsRouter);
+mainRouter.use("/profile", profileRouter);
 // ────────────────────────────────────────────────────────────────
 
 export default mainRouter;
