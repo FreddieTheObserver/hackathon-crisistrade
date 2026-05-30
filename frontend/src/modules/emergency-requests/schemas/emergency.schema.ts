@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const emergencyUrgencySchema = z.enum(["Urgent", "Medium", "Low"]);
-export const emergencyStatusSchema = z.enum(["Open", "Helped"]);
+export const emergencyStatusSchema = z.enum(["Open", "Helped", "Suspended", "Banned"]);
 
 export const emergencyPostSchema = z.object({
   contact: z.string(),

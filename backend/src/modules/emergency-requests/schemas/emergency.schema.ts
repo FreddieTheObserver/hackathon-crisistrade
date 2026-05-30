@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const emergencyUrgencySchema = z.enum(["Urgent", "Medium", "Low"]);
-export const emergencyStatusSchema = z.enum(["Open", "Helped"]);
+export const emergencyStatusSchema = z.enum(["Open", "Helped", "Suspended", "Banned"]);
 
 export const createEmergencySchema = z.object({
   title: z.string().trim().min(1, "Title is required").max(24, "Title must be 24 characters or fewer"),
