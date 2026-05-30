@@ -4,6 +4,7 @@ import { marketplaceTradesRoutes } from "./modules/marketplace-trades/marketplac
 import { DonationsPage } from "./modules/donations/DonationsPage";
 import { emergencyRoutes } from "./modules/emergency-requests/routers/emergency.routes";
 import { exchangeRoutes } from "./modules/exchange/exchange.routes";
+import { ProfilePage } from "./pages/ProfilePage";
 
 /**
  * Root browser router — Area I (coordinate before editing).
@@ -46,6 +47,12 @@ const mainRouter = createBrowserRouter([
 
       // Safe Exchange Points  (owner: Saw Thet Wai Yan)             path: /exchange-points
       ...exchangeRoutes,
+
+      // Profile placeholder                                         path: /profile
+      {
+        path: "/profile",
+        element: <ProfilePage />,
+      },
       // ──────────────────────────────────────────────────────────
     ],
   },
