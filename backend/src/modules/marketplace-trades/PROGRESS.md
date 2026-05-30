@@ -5,7 +5,7 @@
 
 **Legend:** `[ ]` not started · `[~]` in progress · `[x]` done · `[!]` blocked
 
-## Status: Backend complete (Tasks 0–8 done; verification pending live run)
+## Status: Backend complete (Tasks 0–9 done; verified via Postman)
 
 > Note: files live under the kept subfolder layout — `schemas/`, `types/`,
 > `services/` (data layer), `controllers/`, `middlewares/` (upload +
@@ -62,11 +62,11 @@
 - [x] `npm run seed` runs clean (9 trades, 2 traders)
 
 ### 9. Verification (see PLAN.md)
-- [ ] CRUD endpoints return correct shapes/status codes
-- [ ] Filters (`area/urgency/itemType/status/search`) work
-- [ ] Photo upload → `201` with reachable `/uploads/<file>`
-- [ ] Completion: counterparty required; +1 both; idempotent re-PATCH
-- [ ] Delete → 200 then 404
+- [x] CRUD endpoints return correct shapes/status codes
+- [x] Filters (`area/urgency/itemType/status/search`) work
+- [x] Photo upload → `201` with reachable `/uploads/<file>`
+- [x] Completion: counterparty required; +1 both; idempotent re-PATCH
+- [x] Delete → 200 then 404
 
 ## Notes / decisions log
 - 2026-05-30 — Kept the existing subfolder layout (`schemas/`, `services/`,
@@ -75,5 +75,6 @@
   (the plan's `*.data.ts` role).
 - 2026-05-30 — `db push` applied with `--accept-data-loss` (Int→cuid PK change);
   a full `--force-reset` was not needed.
-- 2026-05-30 — Tasks 0–8 implemented; `tsc --noEmit` clean. Task 9 live-run
-  verification still pending against a running dev server.
+- 2026-05-30 — Tasks 0–8 implemented; `tsc --noEmit` clean.
+- 2026-05-30 — Task 9 verified manually via Postman against `npm run dev`
+  (CRUD, filters, photo upload, reputation completion/idempotency, delete→404).
