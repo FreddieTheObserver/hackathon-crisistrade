@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
+import { LoadingState } from "../components/StateViews";
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -16,8 +17,8 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-page text-sm font-medium text-muted">
-        Loading…
+      <div className="flex min-h-screen items-center justify-center bg-page">
+        <LoadingState />
       </div>
     );
   }
