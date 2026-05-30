@@ -1,7 +1,7 @@
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 
-type NavTone = "trade" | "emergency" | "donation" | "location";
+type NavTone = "trade" | "emergency" | "donation" | "location" | "admin";
 
 /** First letters of up to two words, e.g. "Aung Kyaw" → "AK". */
 function initialsOf(name: string): string {
@@ -17,12 +17,14 @@ type NavItem = {
   tone: NavTone;
 };
 
-const navItems: NavItem[] = [
+const mainNavItems: NavItem[] = [
   { label: "Trades", to: "/trades", tone: "trade" },
   { label: "Emergency", to: "/requests", tone: "emergency" },
   { label: "Donations", to: "/donations", tone: "donation" },
   { label: "Locations", to: "/exchange-points", tone: "location" },
 ];
+
+const adminNavItem: NavItem = { label: "Admin", to: "/admin", tone: "admin" };
 
 const navToneClasses: Record<NavTone, { text: string; underline: string }> = {
   trade: {
@@ -41,12 +43,17 @@ const navToneClasses: Record<NavTone, { text: string; underline: string }> = {
     text: "text-sky-600 hover:text-sky-600",
     underline: "bg-sky-500",
   },
+  admin: {
+    text: "text-emerald-600 hover:text-emerald-600",
+    underline: "bg-emerald-500",
+  },
 };
 
 export const MainNavbar = () => {
   const location = useLocation();
   const { user } = useAuth();
   const isAdminRoute = location.pathname.startsWith("/admin");
+  const navItems = user?.role === "admin" ? [...mainNavItems, adminNavItem] : mainNavItems;
 
   if (isAdminRoute) {
     return null;

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "../../../auth/AuthContext";
 import {
   createExchangePoint,
   deleteExchangePoint,
@@ -65,6 +66,8 @@ const toPayload = (formValues: ExchangePointFormValues): ExchangePointPayload =>
 });
 
 const AdminDashboardPage = () => {
+  const navigate = useNavigate();
+  const { logout } = useAuth();
   const [locations, setLocations] = useState<ExchangePoint[]>([]);
   const [formValues, setFormValues] = useState<ExchangePointFormValues>(emptyFormValues);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -74,6 +77,7 @@ const AdminDashboardPage = () => {
   const [searchText, setSearchText] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const refreshLocations = async () => {
@@ -244,6 +248,19 @@ const AdminDashboardPage = () => {
     }
   };
 
+  const handleSignOut = async () => {
+    setSigningOut(true);
+    setError(null);
+
+    try {
+      await logout();
+      navigate("/login", { replace: true });
+    } catch {
+      setError("Could not sign out. Please try again.");
+      setSigningOut(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex bg-slate-50 text-slate-900">
       <aside className="flex w-64 flex-col gap-6 border-r border-slate-800 bg-slate-900 p-6 text-white">
@@ -272,7 +289,7 @@ const AdminDashboardPage = () => {
         </nav>
         <div className="mt-auto">
           <NavLink
-            to="/admin/integration-needed"
+            to="/profile"
             className="flex items-center gap-3 rounded-md p-2 transition hover:bg-slate-800"
           >
             <div className="h-10 w-10 rounded-full bg-slate-200" />
@@ -281,12 +298,14 @@ const AdminDashboardPage = () => {
               <div className="text-sm text-emerald-300">Super Admin</div>
             </div>
           </NavLink>
-          <NavLink
-            to="/admin/integration-needed"
+          <button
+            type="button"
+            onClick={() => void handleSignOut()}
+            disabled={signingOut}
             className="mt-6 flex w-full justify-center rounded border border-slate-700 py-2 font-semibold transition hover:bg-slate-800"
           >
-            Sign Out
-          </NavLink>
+            {signingOut ? "Signing Out..." : "Sign Out"}
+          </button>
         </div>
       </aside>
 

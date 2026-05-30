@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "../../../auth/AuthContext";
 import { deleteDonation, getDonations, updateDonation } from "../../donations/donationsApi";
 import type { Donation, DonationStatus } from "../../donations/donationsTypes";
 import { deleteEmergency, getEmergencies, updateEmergency } from "../../emergency-requests/apis/emergency.api";
@@ -225,6 +226,7 @@ async function deletePost(post: AdminPost) {
 
 const AdminOverviewPage = () => {
   const navigate = useNavigate();
+  const { logout } = useAuth();
   const [posts, setPosts] = useState<AdminPost[]>([]);
   const [search, setSearch] = useState("");
   const [boardFilter, setBoardFilter] = useState<BoardFilter>("all");
@@ -235,6 +237,7 @@ const AdminOverviewPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [busyAction, setBusyAction] = useState<string | null>(null);
+  const [signingOut, setSigningOut] = useState(false);
   const [confirmation, setConfirmation] = useState<{ action: AdminAction; post: AdminPost } | null>(null);
 
   const loadPosts = async () => {
@@ -328,6 +331,20 @@ const AdminOverviewPage = () => {
     }
   };
 
+  const handleSignOut = async () => {
+    setSigningOut(true);
+    setError(null);
+    setSuccessMessage(null);
+
+    try {
+      await logout();
+      navigate("/login", { replace: true });
+    } catch {
+      setError("Could not sign out. Please try again.");
+      setSigningOut(false);
+    }
+  };
+
   return (
     <div className="flex min-h-screen bg-slate-50 text-slate-900">
       <aside className="flex w-64 flex-col gap-6 bg-slate-900 p-6 text-white">
@@ -356,7 +373,7 @@ const AdminOverviewPage = () => {
         </nav>
         <div className="mt-auto">
           <NavLink
-            to="/admin/integration-needed"
+            to="/profile"
             className="flex items-center gap-3 rounded-md p-2 transition hover:bg-slate-800"
           >
             <div className="h-10 w-10 rounded-full bg-slate-200" />
@@ -365,12 +382,14 @@ const AdminOverviewPage = () => {
               <div className="text-sm text-emerald-300">Super Admin</div>
             </div>
           </NavLink>
-          <NavLink
-            to="/admin/integration-needed"
+          <button
+            type="button"
+            onClick={() => void handleSignOut()}
+            disabled={signingOut}
             className="mt-6 flex w-full justify-center rounded border border-slate-700 py-2 font-semibold transition hover:bg-slate-800"
           >
-            Sign Out
-          </NavLink>
+            {signingOut ? "Signing Out..." : "Sign Out"}
+          </button>
         </div>
       </aside>
 
