@@ -6,3 +6,21 @@ generator client {
 datasource db {
   provider = "sqlite"
 }
+
+model Donation {
+  id          Int          @id @default(autoincrement())
+  title       String
+  item        String
+  quantity    String
+  category    String
+  location    String
+  availableAt String
+  photoUrl    String
+  note        String?
+  contact     String
+  status      String   @default("AVAILABLE")
+  ownerId     String
+  ownerName   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

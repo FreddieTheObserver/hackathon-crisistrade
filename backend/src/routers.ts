@@ -1,6 +1,9 @@
 import { Router } from "express";
+import { donationsRouter } from "./modules/donations/donations.routers";
 
 const mainRouter = Router();
+
+mainRouter.use("/donations", donationsRouter);
 
 /**
  * Shared router — Area I (coordinate before editing).
