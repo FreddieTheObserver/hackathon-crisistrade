@@ -12,11 +12,11 @@ type ProfileStatCardProps = {
 
 const ProfileStatCard = ({ detail, icon, label, value }: ProfileStatCardProps) => {
   return (
-    <article className="flex min-h-[220px] flex-col items-center justify-center rounded-lg border border-slate-200 bg-white px-6 py-8 text-center shadow-md">
+    <article className="flex min-h-36 flex-col items-center justify-center rounded-lg border border-slate-200 bg-white p-4 text-center shadow-sm">
       {icon}
-      <p className="mt-8 text-4xl font-bold text-emerald-800">{value}</p>
-      <h3 className="mt-4 text-xl font-bold text-emerald-800">{label}</h3>
-      <p className="mt-4 text-sm font-medium text-[#1F2A44]">{detail}</p>
+      <p className="mt-4 text-2xl font-bold text-emerald-800">{value}</p>
+      <h3 className="mt-2 text-sm font-bold text-emerald-800">{label}</h3>
+      <p className="mt-2 text-xs font-medium text-[#1F2A44]">{detail}</p>
     </article>
   );
 };
@@ -27,7 +27,7 @@ type ProfileStatsGridProps = {
 
 export const ProfileStatsGrid = ({ stats }: ProfileStatsGridProps) => {
   return (
-    <div className="grid gap-6 sm:grid-cols-3">
+    <div className="grid gap-4 sm:grid-cols-3">
       <ProfileStatCard
         detail={`${stats.trades.completed} completed`}
         icon={<TrendIcon />}

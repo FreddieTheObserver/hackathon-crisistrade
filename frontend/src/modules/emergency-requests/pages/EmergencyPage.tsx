@@ -130,7 +130,7 @@ const EmergencyPage = () => {
 
   return (
     <div className="min-h-[calc(100vh-73px)] bg-slate-50">
-      <div className="mx-auto max-w-7xl px-6 py-8">
+      <div className="mx-auto max-w-6xl px-6 py-6">
         <EmergencyHeader
           onAddEmergency={() => {
             setEditingPost(null);

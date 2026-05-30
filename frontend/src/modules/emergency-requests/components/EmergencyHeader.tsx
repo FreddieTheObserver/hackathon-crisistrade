@@ -15,7 +15,7 @@ const EmergencyHeader = ({ onAddEmergency }: EmergencyHeaderProps) => {
         </div>
 
         <div>
-          <h1 className="text-3xl font-bold text-slate-800">Emergency Request</h1>
+          <h1 className="text-2xl font-bold text-slate-800">Emergency Request</h1>
           <p className="mt-1 text-sm text-slate-600">Ask for help or help people in need</p>
         </div>
       </div>

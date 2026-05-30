@@ -22,16 +22,16 @@ export const ProfileAvatar = ({
   profilePhotoUrl,
 }: ProfileAvatarProps) => {
   return (
-    <div className="relative mx-auto h-40 w-40 rounded-full bg-emerald-100">
+    <div className="relative mx-auto h-28 w-28 rounded-full bg-emerald-100">
       {profilePhotoUrl ? (
         <img alt={`${name} profile`} className="h-full w-full rounded-full object-cover" src={profilePhotoUrl} />
       ) : (
-        <div className="flex h-full w-full items-center justify-center text-6xl font-bold text-[#1F2A44]">{initials}</div>
+        <div className="flex h-full w-full items-center justify-center text-3xl font-bold text-[#1F2A44]">{initials}</div>
       )}
       {isEditing ? (
         <>
           <button
-            className="absolute bottom-3 right-0 flex h-12 w-12 items-center justify-center rounded-full border-4 border-white bg-[#1F2A44] text-white shadow-md transition hover:-translate-y-0.5 hover:bg-[#263657] hover:shadow-lg hover:ring-2 hover:ring-emerald-100"
+            className="absolute bottom-1 right-0 flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-[#1F2A44] text-white shadow-md transition hover:-translate-y-0.5 hover:bg-[#263657] hover:shadow-lg hover:ring-2 hover:ring-emerald-100"
             onClick={onPhotoPickerOpen}
             type="button"
           >

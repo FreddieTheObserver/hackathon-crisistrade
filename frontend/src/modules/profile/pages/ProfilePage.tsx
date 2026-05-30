@@ -11,7 +11,7 @@ import { ProfileStatsGrid } from "../components/ProfileStatsGrid";
 import type { ProfileInfo } from "../types/profile.type";
 
 const inputClass =
-  "w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-base font-medium text-[#1F2A44] shadow-sm outline-none transition focus:border-emerald-300 focus:ring-2 focus:ring-emerald-100";
+  "w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-[#1F2A44] shadow-sm outline-none transition focus:border-emerald-300 focus:ring-2 focus:ring-emerald-100";
 
 const getInitials = (name: string) => {
   const initials = name
@@ -209,17 +209,17 @@ export const ProfilePage = () => {
 
   return (
     <main className="min-h-[calc(100vh-73px)] bg-slate-50">
-      <div className="mx-auto max-w-7xl px-6 pb-12 pt-6">
-        <header className="flex items-start justify-between gap-6">
+      <div className="mx-auto max-w-6xl px-6 py-6">
+        <header className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-bold text-[#1F2A44]">My Profile</h1>
-            <p className="mt-4 text-base text-[#1F2A44]">Manage your account and update your preferences.</p>
+            <h1 className="text-2xl font-bold text-[#1F2A44]">My Profile</h1>
+            <p className="mt-1 text-sm text-[#1F2A44]">Manage your account and update your preferences.</p>
             {profileError ? <p className="mt-3 text-sm font-semibold text-red-500">{profileError}</p> : null}
           </div>
 
           {profile ? (
             <button
-              className="mt-2 rounded-lg border border-red-200 bg-white px-5 py-2.5 text-sm font-semibold text-red-600 shadow-sm transition hover:border-red-300 hover:bg-red-50 hover:ring-2 hover:ring-red-100"
+              className="rounded-md border border-red-200 bg-white px-4 py-2 text-sm font-semibold text-red-600 shadow-sm transition hover:border-red-300 hover:bg-red-50 hover:ring-2 hover:ring-red-100"
               onClick={handleLogout}
               type="button"
             >
@@ -229,7 +229,7 @@ export const ProfilePage = () => {
         </header>
 
         {profile && draftProfile && visibleProfile ? (
-          <section className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(360px,0.95fr)]">
+          <section className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(320px,0.9fr)]">
             <ProfileCard
               draftProfile={draftProfile}
               initials={initials}
@@ -247,13 +247,13 @@ export const ProfilePage = () => {
               visibleProfile={visibleProfile}
             />
 
-            <div className="space-y-8">
+            <div className="space-y-6">
               <ProfileReputationPanel isVerified={profile.isVerified} reputationPoints={profile.reputationPoints} />
               <ProfileStatsGrid stats={profile.stats} />
             </div>
           </section>
         ) : (
-          <div className="mt-8 rounded-lg border border-slate-200 bg-white px-6 py-8 text-sm font-medium text-slate-500 shadow-sm">
+          <div className="mt-6 rounded-lg border border-slate-200 bg-white px-6 py-6 text-sm font-medium text-slate-500 shadow-sm">
             Loading profile...
           </div>
         )}

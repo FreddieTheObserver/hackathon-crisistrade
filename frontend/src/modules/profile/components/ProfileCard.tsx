@@ -41,8 +41,8 @@ export const ProfileCard = ({
   visibleProfile,
 }: ProfileCardProps) => {
   return (
-    <article className="min-h-[520px] rounded-lg border border-slate-200 bg-white px-14 py-16 shadow-md">
-      <div className="grid gap-12 md:grid-cols-[170px_minmax(0,1fr)]">
+    <article className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="grid gap-6 md:grid-cols-[128px_minmax(0,1fr)]">
         <ProfileAvatar
           initials={initials}
           isEditing={isEditing}
@@ -59,16 +59,16 @@ export const ProfileCard = ({
 
             {isEditing ? (
               <input
-                className={`${inputClass} max-w-sm text-3xl font-bold`}
+                className={`${inputClass} max-w-sm text-2xl font-bold`}
                 onChange={(event) => onUpdateDraft("name", event.target.value)}
                 placeholder="Name"
                 value={draftProfile.name}
               />
             ) : (
-              <h2 className="text-4xl font-bold text-[#1F2A44]">{profile.name}</h2>
+              <h2 className="text-2xl font-bold text-[#1F2A44]">{profile.name}</h2>
             )}
 
-            <div className="mt-6 flex flex-wrap items-center gap-3">
+            <div className="mt-4 flex flex-wrap items-center gap-3">
               {!isEditing ? (
                 <button
                   className="whitespace-nowrap rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-[#1F2A44] shadow-md transition hover:border-emerald-300 hover:bg-emerald-50 hover:ring-2 hover:ring-emerald-100"
@@ -83,7 +83,7 @@ export const ProfileCard = ({
             </div>
           </div>
 
-          <div className="mt-8 space-y-4 text-base font-medium text-[#1F2A44]">
+          <div className="mt-5 space-y-3 text-sm font-medium text-[#1F2A44]">
             <ProfileInfoRow icon={<CalendarIcon />}>Member since {memberSince}</ProfileInfoRow>
           </div>
         </div>
@@ -91,19 +91,19 @@ export const ProfileCard = ({
 
       {isEditing ? (
         <textarea
-          className={`${inputClass} mx-auto mt-12 block max-w-md resize-none text-center leading-snug`}
+          className={`${inputClass} mx-auto mt-6 block max-w-md resize-none text-center leading-snug`}
           onChange={(event) => onUpdateDraft("bio", event.target.value)}
           placeholder="Write a short note about yourself (optional)"
           rows={4}
           value={draftProfile.bio}
         />
       ) : (
-        <p className="mx-auto mt-12 max-w-md text-center text-base leading-snug text-[#1F2A44]">{profile.bio}</p>
+        <p className="mx-auto mt-6 max-w-md text-center text-sm leading-snug text-[#1F2A44]">{profile.bio}</p>
       )}
 
-      <div className="my-8 border-t border-slate-400" />
+      <div className="my-6 border-t border-slate-200" />
 
-      <div className="mx-auto max-w-md space-y-4 text-left text-base text-[#1F2A44]">
+      <div className="mx-auto max-w-md space-y-3 text-left text-sm text-[#1F2A44]">
         <ProfileInfoRow icon={<PhoneIcon />}>
           {isEditing ? (
             <input
