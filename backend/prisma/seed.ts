@@ -8,12 +8,13 @@ import bcrypt from "bcryptjs";
 const PASSWORD = "password123";
 
 const demoUsers = [
-  { key: "anita", email: "anita@crisistrade.test", displayName: "Anita Sharma" },
-  { key: "bikash", email: "bikash@crisistrade.test", displayName: "Bikash Gurung" },
-  { key: "chandra", email: "chandra@crisistrade.test", displayName: "Chandra Rai" },
-  { key: "deepa", email: "deepa@crisistrade.test", displayName: "Deepa Thapa" },
-  { key: "sita", email: "sita@crisistrade.test", displayName: "Sita Karki" },
-  { key: "ram", email: "ram@crisistrade.test", displayName: "Ram Bahadur" },
+  { key: "admin", email: "admin@crisistrade.test", displayName: "Site Admin", role: "admin" },
+  { key: "anita", email: "anita@crisistrade.test", displayName: "Anita Sharma", role: "user" },
+  { key: "bikash", email: "bikash@crisistrade.test", displayName: "Bikash Gurung", role: "user" },
+  { key: "chandra", email: "chandra@crisistrade.test", displayName: "Chandra Rai", role: "user" },
+  { key: "deepa", email: "deepa@crisistrade.test", displayName: "Deepa Thapa", role: "user" },
+  { key: "sita", email: "sita@crisistrade.test", displayName: "Sita Karki", role: "user" },
+  { key: "ram", email: "ram@crisistrade.test", displayName: "Ram Bahadur", role: "user" },
 ] as const;
 
 type UserKey = (typeof demoUsers)[number]["key"];
@@ -42,7 +43,7 @@ async function main() {
   const users: Record<string, DemoUser> = {};
   for (const u of demoUsers) {
     const created = await prisma.user.create({
-      data: { email: u.email, displayName: u.displayName, passwordHash },
+      data: { email: u.email, displayName: u.displayName, passwordHash, role: u.role },
     });
     users[u.key] = { id: created.id, displayName: created.displayName };
   }
@@ -89,7 +90,7 @@ async function main() {
   });
 
   console.log("Seeded users:");
-  for (const u of demoUsers) console.log(`  ${u.email} / ${PASSWORD}  (${u.displayName})`);
+  for (const u of demoUsers) console.log(`  ${u.email} / ${PASSWORD}  (${u.displayName}, ${u.role})`);
   console.log(
     `Counts: ${await prisma.user.count()} users, ${await prisma.trade.count()} trades, ` +
       `${await prisma.donation.count()} donations, ${await prisma.emergencyRequest.count()} requests, ` +
