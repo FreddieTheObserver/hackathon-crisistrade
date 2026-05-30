@@ -15,7 +15,7 @@ model Donation {
   category    String
   location    String
   availableAt String
-  photoUrl    String
+  photoUrl    String?
   note        String?
   contact     String
   status      String   @default("AVAILABLE")
