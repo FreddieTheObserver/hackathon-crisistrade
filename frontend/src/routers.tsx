@@ -1,5 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import App from "./App";
+import { DonationsPage } from "./modules/donations/DonationsPage";
 
 /**
  * Root browser router — Area I (coordinate before editing).
@@ -31,7 +32,10 @@ const mainRouter = createBrowserRouter([
       // ...marketplaceTradesRoutes,
 
       // Donations  (owner: Eaint Myat Noe)                          path: /donations
-      // ...donationsRoutes,
+      {
+        path: "/donations",
+        element: <DonationsPage />,
+      }
 
       // Emergency Requests  (owner: Felice Christiara Median Putri)  path: /requests
       // ...emergencyRequestsRoutes,
