@@ -1,6 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import App from "./App";
-import { emergencyRequestsRoutes } from "./modules/emergency-requests/routers/emergencyRequests.routes";
+import { emergencyRoutes } from "./modules/emergency-requests/routers/emergency.routes";
 
 /**
  * Root browser router — Area I (coordinate before editing).
@@ -35,7 +35,7 @@ const mainRouter = createBrowserRouter([
       // ...donationsRoutes,
 
       // Emergency Requests  (owner: Felice Christiara Median Putri)  path: /requests
-      ...emergencyRequestsRoutes,
+      ...emergencyRoutes,
 
       // Safe Exchange Points  (owner: Saw Thet Wai Yan)             path: /exchange-points
       // ...exchangePointsRoutes,

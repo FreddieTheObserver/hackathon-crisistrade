@@ -1,8 +1,8 @@
-type EmergencyRequestActionButtonProps = {
+type EmergencyActionButtonProps = {
   label: string;
 };
 
-const EmergencyRequestActionButton = ({ label }: EmergencyRequestActionButtonProps) => {
+const EmergencyActionButton = ({ label }: EmergencyActionButtonProps) => {
   return (
     <button
       type="button"
@@ -13,4 +13,4 @@ const EmergencyRequestActionButton = ({ label }: EmergencyRequestActionButtonPro
   );
 };
 
-export default EmergencyRequestActionButton;
+export default EmergencyActionButton;

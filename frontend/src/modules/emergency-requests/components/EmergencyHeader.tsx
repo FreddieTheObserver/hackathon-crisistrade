@@ -1,6 +1,6 @@
-import EmergencyRequestActionButton from "./EmergencyRequestActionButton";
+import EmergencyActionButton from "./EmergencyActionButton";
 
-const EmergencyRequestsHeader = () => {
+const EmergencyHeader = () => {
   return (
     <section className="flex items-start justify-between gap-6">
       <div className="flex items-center gap-5">
@@ -9,14 +9,14 @@ const EmergencyRequestsHeader = () => {
         </div>
 
         <div>
-          <h1 className="text-3xl font-bold text-slate-800">Emergency Request</h1>
+          <h1 className="text-3xl font-bold text-slate-800">Emergency</h1>
           <p className="mt-1 text-sm text-slate-600">Ask for help or help people in need</p>
         </div>
       </div>
 
-      <EmergencyRequestActionButton label="+ Add Emergency" />
+      <EmergencyActionButton label="+ Add Emergency" />
     </section>
   );
 };
 
-export default EmergencyRequestsHeader;
+export default EmergencyHeader;
