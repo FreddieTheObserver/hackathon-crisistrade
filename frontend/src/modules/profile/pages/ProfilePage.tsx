@@ -209,7 +209,7 @@ export const ProfilePage = () => {
   }, [navigate, setUser]);
 
   return (
-    <main className="min-h-[calc(100vh-73px)] bg-slate-50">
+    <main className="min-h-full bg-slate-50">
       <div className="mx-auto max-w-7xl px-6 pb-12 pt-6">
         <header className="flex items-start justify-between gap-6">
           <div>
