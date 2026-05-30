@@ -1,3 +1,5 @@
+import React from "react";
+
 type EmergencyUploadButtonProps = {
   onFileSelected?: (photoUrl: string) => void;
   onRemove?: () => void;
@@ -5,18 +7,86 @@ type EmergencyUploadButtonProps = {
 };
 
 const EmergencyUploadButton = ({ onFileSelected, onRemove, previewUrl }: EmergencyUploadButtonProps) => {
-  const inputId = `upload-input-${Math.random().toString(36).slice(2, 9)}`;
+  const inputId = `upload-input-${React.useId()}`;
+  const inputRef = React.useRef<HTMLInputElement | null>(null);
 
-  const readPhoto = (file: File) => {
-    const reader = new FileReader();
+  const compressImage = (file: File, maxDim = 800, quality = 0.65): Promise<string> =>
+    new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(file);
+      const img = new Image();
 
-    reader.addEventListener("load", () => {
-      if (typeof reader.result === "string") {
-        onFileSelected?.(reader.result);
-      }
+      img.onload = () => {
+        try {
+          let { width, height } = img;
+
+          if (width > maxDim || height > maxDim) {
+            const scale = Math.min(maxDim / width, maxDim / height);
+            width = Math.round(width * scale);
+            height = Math.round(height * scale);
+          }
+
+          const canvas = document.createElement("canvas");
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+
+          if (!ctx) {
+            reject(new Error("Canvas context not available"));
+            return;
+          }
+
+          ctx.drawImage(img, 0, 0, width, height);
+          // Prefer webp for smaller size when available
+          let dataUrl: string;
+          try {
+            dataUrl = canvas.toDataURL("image/webp", quality);
+            // Some browsers return the same type if not supported, still ok
+          } catch {
+            dataUrl = canvas.toDataURL("image/jpeg", quality);
+          }
+          resolve(dataUrl);
+        } catch (err) {
+          reject(err);
+        } finally {
+          URL.revokeObjectURL(url);
+        }
+      };
+
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        reject(new Error("Failed to load image"));
+      };
+
+      img.src = url;
     });
 
-    reader.readAsDataURL(file);
+  const readPhoto = async (file: File) => {
+    try {
+      // Compress/resize to reduce payload size before sending to API
+      const compressed = await compressImage(file);
+      // enforce server-side schema limit (5_000_000 chars)
+      if (compressed.length > 5_000_000) {
+        // If still too large, try a lower quality pass
+        const smaller = await compressImage(file, 600, 0.5);
+        if (smaller.length <= 5_000_000) {
+          onFileSelected?.(smaller);
+          return;
+        }
+        // give user a clear client-side error instead of failing silently
+        alert("Selected photo is too large after compression. Please choose a smaller image.");
+        return;
+      }
+      onFileSelected?.(compressed);
+    } catch {
+      // fallback to original dataURL if compression fails
+      const reader = new FileReader();
+      reader.addEventListener("load", () => {
+        if (typeof reader.result === "string") {
+          onFileSelected?.(reader.result);
+        }
+      });
+      reader.readAsDataURL(file);
+    }
   };
 
   return (
@@ -36,6 +106,7 @@ const EmergencyUploadButton = ({ onFileSelected, onRemove, previewUrl }: Emergen
 
       <input
         id={inputId}
+        ref={inputRef}
         accept="image/*"
         className="hidden"
         onChange={(event) => {
@@ -52,7 +123,15 @@ const EmergencyUploadButton = ({ onFileSelected, onRemove, previewUrl }: Emergen
         <div className="flex justify-center mt-2">
           <button
             className="text-xs font-semibold text-red-500 transition hover:text-red-600 hover:underline hover:underline-offset-2"
-            onClick={onRemove}
+            onClick={() => {
+              // clear the hidden input so re-selecting the same file will trigger change
+              try {
+                if (inputRef.current) inputRef.current.value = "";
+              } catch {
+                /* ignore */
+              }
+              onRemove?.();
+            }}
             type="button"
           >
             Remove

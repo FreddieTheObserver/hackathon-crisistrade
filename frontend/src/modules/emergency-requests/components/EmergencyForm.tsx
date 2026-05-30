@@ -70,7 +70,9 @@ const EmergencyForm = ({ editingPost, onClose, onSubmit }: EmergencyFormProps) =
   };
 
   const removePhoto = () => {
-    setValues((current) => ({ ...current, photoUrl: undefined }));
+    // set to empty string so the field is included in the payload
+    // (undefined would be omitted and the backend would keep the old photo)
+    setValues((current) => ({ ...current, photoUrl: "" }));
   };
 
   const submitEmergency = async (event: React.FormEvent<HTMLFormElement>) => {

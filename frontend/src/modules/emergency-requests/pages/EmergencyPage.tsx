@@ -64,6 +64,7 @@ const EmergencyPage = () => {
   const [editingPost, setEditingPost] = useState<EmergencyPost | null>(null);
   const [filters, setFilters] = useState<EmergencyFilterValues>(initialFilters);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [submissionError, setSubmissionError] = useState<string | null>(null);
   const [previewPhotoUrl, setPreviewPhotoUrl] = useState<string | null>(null);
   const [posts, setPosts] = useState<EmergencyPost[]>([]);
   const locationOptions = getLocationOptions(posts);
@@ -79,20 +80,29 @@ const EmergencyPage = () => {
   };
 
   const savePost = async (payload: EmergencyFormPayload) => {
-    const savedPost = editingPost
-      ? await updateEmergency(editingPost.id, payload)
-      : await createEmergency(payload);
+    try {
+      setSubmissionError(null);
+      const savedPost = editingPost
+        ? await updateEmergency(editingPost.id, payload)
+        : await createEmergency(payload);
 
-    setPosts((current) => {
-      const existingPost = current.some((item) => item.id === savedPost.id);
+      setPosts((current) => {
+        const existingPost = current.some((item) => item.id === savedPost.id);
 
-      if (existingPost) {
-        return current.map((item) => (item.id === savedPost.id ? savedPost : item));
-      }
+        if (existingPost) {
+          return current.map((item) => (item.id === savedPost.id ? savedPost : item));
+        }
 
-      return [savedPost, ...current];
-    });
-    closeForm();
+        return [savedPost, ...current];
+      });
+      closeForm();
+    } catch (error: unknown) {
+      // try to read message from API response
+      const errResp = error as { response?: { data?: { message?: string } } };
+      const message = errResp?.response?.data?.message || (error instanceof Error ? error.message : "Failed to save emergency");
+      setSubmissionError(String(message));
+      console.error("Save post error:", error);
+    }
   };
 
   const startEditPost = (post: EmergencyPost) => {
@@ -136,6 +146,11 @@ const EmergencyPage = () => {
         </div>
         {isFormOpen && (
           <div className="mt-7">
+            {submissionError && (
+              <div className="mb-4 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                {submissionError}
+              </div>
+            )}
             <EmergencyForm
               editingPost={editingPost}
               onClose={closeForm}
