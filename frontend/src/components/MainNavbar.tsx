@@ -1,6 +1,15 @@
 import { Link, NavLink, useLocation } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
 
 type NavTone = "trade" | "emergency" | "donation" | "location";
+
+/** First letters of up to two words, e.g. "Aung Kyaw" → "AK". */
+function initialsOf(name: string): string {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return "?";
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
 
 type NavItem = {
   label: string;
@@ -36,6 +45,7 @@ const navToneClasses: Record<NavTone, { text: string; underline: string }> = {
 
 export const MainNavbar = () => {
   const location = useLocation();
+  const { user } = useAuth();
   const isAdminRoute = location.pathname.startsWith("/admin");
 
   if (isAdminRoute) {
@@ -96,9 +106,10 @@ export const MainNavbar = () => {
                 : "border-blue-200 bg-blue-100 text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800",
             ].join(" ")
           }
-          aria-label="Profile"
+          aria-label={user ? `Profile — ${user.displayName}` : "Profile"}
+          title={user?.displayName}
         >
-          AK
+          {user ? initialsOf(user.displayName) : "?"}
         </NavLink>
       </div>
     </header>

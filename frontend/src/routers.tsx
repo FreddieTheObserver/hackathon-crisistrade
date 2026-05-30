@@ -5,7 +5,9 @@ import { DonationsPage } from "./modules/donations/DonationsPage";
 import { emergencyRoutes } from "./modules/emergency-requests/routers/emergency.routes";
 import { exchangeRoutes } from "./modules/exchange/exchange.routes";
 import { LoginPage } from "./pages/LoginPage";
+import { SignupPage } from "./pages/SignupPage";
 import { ProfilePage } from "./pages/ProfilePage";
+import ProtectedRoute from "./middlewares/ProtectedRoute";
 
 /**
  * Root browser router — Area I (coordinate before editing).
@@ -29,11 +31,18 @@ import { ProfilePage } from "./pages/ProfilePage";
 
 const mainRouter = createBrowserRouter([
   { path: "/login",
-    element: <LoginPage /> 
+    element: <LoginPage />
+  },
+  { path: "/signup",
+    element: <SignupPage />
   },
   {
     path: "/",
-    element: <App />,
+    element: (
+      <ProtectedRoute>
+        <App />
+      </ProtectedRoute>
+    ),
     children: [
       { index: true, element: <Navigate to="/trades" replace /> },
       // ── Board routes ──────────────────────────────────────────
