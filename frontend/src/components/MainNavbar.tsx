@@ -1,4 +1,6 @@
+import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
+import { Menu, X } from "lucide-react";
 import { useAuth } from "../auth/AuthContext";
 
 type NavTone = "trade" | "emergency" | "donation" | "location";
@@ -46,7 +48,13 @@ const navToneClasses: Record<NavTone, { text: string; underline: string }> = {
 export const MainNavbar = () => {
   const location = useLocation();
   const { user } = useAuth();
+  const [menuOpen, setMenuOpen] = useState(false);
   const isAdminRoute = location.pathname.startsWith("/admin");
+
+  // Close the mobile menu whenever the route changes.
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [location.pathname]);
 
   if (isAdminRoute) {
     return null;
@@ -102,7 +110,7 @@ export const MainNavbar = () => {
               to="/admin"
               className={({ isActive }) =>
                 [
-                  "rounded-full border px-3 py-1.5 text-sm font-semibold transition-colors duration-200",
+                  "hidden rounded-full border px-3 py-1.5 text-sm font-semibold transition-colors duration-200 md:inline-block",
                   isActive
                     ? "border-emerald-300 bg-emerald-600 text-white"
                     : "border-emerald-200 bg-emerald-50 text-emerald-700 hover:border-emerald-300 hover:bg-emerald-100",
@@ -128,8 +136,55 @@ export const MainNavbar = () => {
           >
             {user ? initialsOf(user.displayName) : "?"}
           </NavLink>
+
+          <button
+            type="button"
+            onClick={() => setMenuOpen((open) => !open)}
+            aria-label="Toggle navigation menu"
+            aria-expanded={menuOpen}
+            className="flex h-10 w-10 items-center justify-center rounded-md border border-line text-ink transition-colors hover:bg-page md:hidden"
+          >
+            {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
         </div>
       </div>
+
+      {menuOpen && (
+        <nav className="border-t border-line bg-surface px-6 py-3 md:hidden">
+          <ul className="flex flex-col gap-1 text-sm font-semibold">
+            {navItems.map((item) => {
+              const tone = navToneClasses[item.tone];
+
+              return (
+                <li key={item.to}>
+                  <NavLink
+                    to={item.to}
+                    className={({ isActive }) =>
+                      [
+                        "block rounded-md px-3 py-2 transition-colors",
+                        isActive ? tone.text : "text-muted hover:text-ink",
+                      ].join(" ")
+                    }
+                  >
+                    {item.label}
+                  </NavLink>
+                </li>
+              );
+            })}
+
+            {user?.role === "admin" && (
+              <li>
+                <NavLink
+                  to="/admin"
+                  className="block rounded-md px-3 py-2 text-accent transition-colors hover:text-accent-strong"
+                >
+                  Admin
+                </NavLink>
+              </li>
+            )}
+          </ul>
+        </nav>
+      )}
     </header>
   );
 };
