@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { donationsRouter } from "./modules/donations/donations.routers";
+import emergencyRouter from "./modules/emergency-requests/routers/emergency.router";
 
 const mainRouter = Router();
 
@@ -33,7 +34,7 @@ mainRouter.use("/trades", marketplaceTradesRouter);
 
 // Emergency Requests  (owner: Felice Christiara Median Putri)  prefix: /requests
 // import emergencyRequestsRouter from "./modules/emergency-requests/emergency-requests.router";
-// mainRouter.use("/requests", emergencyRequestsRouter);
+mainRouter.use("/requests", emergencyRouter);
 
 // Safe Exchange Points  (owner: Saw Thet Wai Yan)             prefix: /exchange-points
 // import exchangePointsRouter from "./modules/exchange-points/exchange-points.router";

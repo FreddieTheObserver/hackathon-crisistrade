@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import App from "./App";
 import { marketplaceTradesRoutes } from "./modules/marketplace-trades/marketplace-trades.routes";
 import { DonationsPage } from "./modules/donations/DonationsPage";
+import { emergencyRoutes } from "./modules/emergency-requests/routers/emergency.routes";
 
 /**
  * Root browser router — Area I (coordinate before editing).
@@ -36,10 +37,10 @@ const mainRouter = createBrowserRouter([
       {
         path: "/donations",
         element: <DonationsPage />,
-      }
+      },
 
       // Emergency Requests  (owner: Felice Christiara Median Putri)  path: /requests
-      // ...emergencyRequestsRoutes,
+      ...emergencyRoutes,
 
       // Safe Exchange Points  (owner: Saw Thet Wai Yan)             path: /exchange-points
       // ...exchangePointsRoutes,
