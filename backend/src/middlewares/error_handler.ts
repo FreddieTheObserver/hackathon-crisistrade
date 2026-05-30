@@ -1,12 +1,13 @@
 import type { Request, Response, NextFunction } from "express";
 import { ZodError } from "zod";
+import { MulterError } from "multer";
 
 interface AppError extends Error {
   status?: number;
 }
 
 export function errorHandler(
-  err: AppError | ZodError,
+  err: AppError | ZodError | MulterError,
   _req: Request,
   res: Response,
   _next: NextFunction
@@ -20,6 +21,16 @@ export function errorHandler(
         message: i.message,
       })),
     });
+  }
+
+  // File-upload errors (e.g. size limit) are client errors, not 500s.
+  if (err instanceof MulterError) {
+    const message =
+      err.code === "LIMIT_FILE_SIZE"
+        ? "Image must be 2 MB or smaller"
+        : err.message;
+    console.error(`[400] Upload failed: ${err.code}`);
+    return res.status(400).json({ message });
   }
 
   const status = err.status ?? 500;
