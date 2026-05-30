@@ -5,6 +5,8 @@ import { DonationsPage } from "./modules/donations/DonationsPage";
 import { emergencyRoutes } from "./modules/emergency-requests/routers/emergency.routes";
 import { exchangeRoutes } from "./modules/exchange/exchange.routes";
 import { profileRoutes } from "./modules/profile/routers/profile.routes";
+import { LoginPage } from "./pages/LoginPage";
+import { ProfilePage } from "./pages/ProfilePage";
 
 /**
  * Root browser router — Area I (coordinate before editing).
@@ -27,6 +29,9 @@ import { profileRoutes } from "./modules/profile/routers/profile.routes";
  */
 
 const mainRouter = createBrowserRouter([
+  { path: "/login",
+    element: <LoginPage /> 
+  },
   {
     path: "/",
     element: <App />,
