@@ -4,10 +4,10 @@ import logoImage from "../logo.png";
 const AdminIntegrationPage = () => (
   <div className="min-h-screen flex bg-slate-50 text-slate-900">
     <aside className="flex w-64 flex-col gap-6 border-r border-slate-800 bg-slate-900 p-6 text-white">
-      <div className="flex items-center gap-3">
+      <NavLink to="/trades" className="flex items-center gap-3 rounded-md transition hover:text-emerald-300">
         <img src={logoImage} alt="Crisis Trade logo" className="h-10 w-10 rounded object-contain" />
         <div className="text-xl font-bold">Crisis Trade</div>
-      </div>
+      </NavLink>
       <nav className="mt-6 flex flex-col gap-2">
         <NavLink
           to="/admin/overview"

@@ -18,7 +18,7 @@ export const ITEM_TYPES = [
 ] as const;
 
 export const URGENCIES = ["low", "medium", "high", "critical"] as const;
-export const STATUSES = ["available", "pending", "completed", "unavailable"] as const;
+export const STATUSES = ["available", "pending", "completed", "unavailable", "suspended", "banned"] as const;
 
 export type ItemType = (typeof ITEM_TYPES)[number];
 export type Urgency = (typeof URGENCIES)[number];
@@ -29,6 +29,7 @@ export const tradeSchema = z.object({
       id: z.string(),
       title: z.string(),
       ownerName: z.string(),
+      userId: z.string(),
       offering: z.string(),
       wanting: z.string(),
       itemType: z.enum(ITEM_TYPES),

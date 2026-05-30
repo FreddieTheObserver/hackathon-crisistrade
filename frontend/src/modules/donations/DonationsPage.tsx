@@ -230,14 +230,16 @@ export function DonationsPage() {
     <main className="min-h-screen bg-slate-50 text-slate-900">
       <section className="mx-auto max-w-6xl px-6 py-6">
         <div className="mb-6 flex items-start justify-between gap-4">
-          <div>
-           <div className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded border border-rose-100 bg-white text-rose-600">
-            <Heart className="h-7 w-7" fill="currentColor" strokeWidth={2} />
-           </div>
-            <h1 className="mb-2 text-2xl font-bold">Donations</h1>
-            <p className="text-sm text-slate-600">
-              Give freely. Support your community in times of need.
-            </p>
+          <div className="flex items-center gap-4">
+            <div className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded border border-rose-100 bg-white text-rose-600">
+              <Heart className="h-7 w-7" fill="currentColor" strokeWidth={2} />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold">Donations</h1>
+              <p className="mt-1 text-sm text-slate-600">
+                Give freely. Support your community in times of need.
+              </p>
+            </div>
           </div>
 
           <button

@@ -1,25 +1,10 @@
-import { Outlet, Link, NavLink } from "react-router-dom";
+import { Outlet } from "react-router-dom";
+import { MainNavbar } from "./components/MainNavbar";
 
 const App = () => {
   return (
-    <div className="min-h-screen w-full flex flex-col">
-      <header className="border-b border-gray-200 bg-white">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link to="/" className="text-xl font-bold">
-            crisistrade
-          </Link>
-          <nav className="flex gap-4 text-sm text-gray-600">
-            <NavLink
-              to="/trades"
-              className={({ isActive }) =>
-                isActive ? "font-medium text-green-700" : "hover:text-gray-900"
-              }
-          >
-            Trades
-          </NavLink>
-          </nav>
-        </div>
-      </header>
+    <div className="flex min-h-screen w-full flex-col bg-slate-50">
+      <MainNavbar />
       <main className="flex-1">
         <Outlet />
       </main>

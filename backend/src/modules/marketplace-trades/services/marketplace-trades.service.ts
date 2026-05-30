@@ -5,9 +5,10 @@ import type {
       ListTradesQuery,
 } from "../types/marketplace-trades.types";
 
-// photoUrl is derived server-side from the upload, so it rides alongside the
-// validated body rather than living in the Zod schema.
-type CreateTradeData = CreateTradeInput & { photoUrl?: string };
+// photoUrl is derived server-side from the upload, and userId/ownerName are
+// stamped from the session user — so they ride alongside the validated body
+// rather than living in the Zod schema.
+type CreateTradeData = CreateTradeInput & { photoUrl?: string; userId: string; ownerName: string };
 type UpdateTradeData = UpdateTradeInput & { photoUrl?: string };
 
 function notFound(): never {
@@ -57,12 +58,18 @@ export async function createTrade(input: CreateTradeData) {
  * "completed". Wrapped in a $transaction so the trade update and both Trader
  * upserts commit together.
  */
-export async function updateTradeWithReputation(id: string, patch: UpdateTradeData) {
+type Actor = { id: string; isAdmin: boolean };
+
+export async function updateTradeWithReputation(id: string, actor: Actor, patch: UpdateTradeData) {
       return prisma.$transaction(async (tx) => {
             const existing = await tx.trade.findUnique({ where: { id } });
             if (!existing) notFound();
 
-            const ownerName = patch.ownerName ?? existing.ownerName;
+            if (existing.userId !== actor.id && !actor.isAdmin) {
+                  throw Object.assign(new Error("You can only modify your own trades."), { status: 403 });
+            }
+
+            const ownerName = existing.ownerName;
             const counterparty = patch.counterparty ?? existing.counterparty;
 
             if (patch.status === "completed" && !counterparty) {
@@ -81,22 +88,31 @@ export async function updateTradeWithReputation(id: string, patch: UpdateTradeDa
             });
 
             if (becomingCompleted) {
+                  // Reputation always credits the trade's owner (never the actor,
+                  // which may be a moderating admin) and links to that account.
+                  await tx.trader.upsert({
+                        where: { name: ownerName },
+                        create: { name: ownerName, userId: existing.userId, reputationPoints: 1 },
+                        update: { userId: existing.userId, reputationPoints: { increment: 1 } },
+                  });
+                  // Counterparty stays by-name (typed); no user account linked.
                   // counterparty is guaranteed present here (checked above).
-                  for (const name of [ownerName, counterparty as string]) {
-                        await tx.trader.upsert({
-                              where: { name },
-                              create: { name, reputationPoints: 1 },
-                              update: { reputationPoints: { increment: 1 } },
-                        });
-                  }
+                  await tx.trader.upsert({
+                        where: { name: counterparty as string },
+                        create: { name: counterparty as string, reputationPoints: 1 },
+                        update: { reputationPoints: { increment: 1 } },
+                  });
             }
 
             return updated;
       });
 }
 
-export async function deleteTrade(id: string) {
-      await getTradeById(id); // throws 404 if it doesn't exist
+export async function deleteTrade(id: string, actor: Actor) {
+      const trade = await getTradeById(id); // throws 404 if it doesn't exist
+      if (trade.userId !== actor.id && !actor.isAdmin) {
+            throw Object.assign(new Error("You can only delete your own trades."), { status: 403 });
+      }
       await prisma.trade.delete({ where: { id } });
 }
 

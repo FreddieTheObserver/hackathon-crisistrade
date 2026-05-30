@@ -9,11 +9,13 @@ import {
   listDonations,
   updateDonation,
 } from "../services/donations.service";
+import { isAdmin } from "../../../middlewares/require-auth";
 
-const CURRENT_USER = {
-  id: "current-user",
-  name: "AK",
-};
+// Derive the donations service's expected user shape from the session user.
+function currentUser(req: Request) {
+  const u = req.user!;
+  return { id: u.id, name: u.displayName, isAdmin: isAdmin(u) };
+}
 
 // error with status code
 class DonationControllerError extends Error {
@@ -45,8 +47,11 @@ function getUploadedPhotoUrl(file: Express.Multer.File | undefined) {
   return file ? `/uploads/donations/${file.filename}` : null;
 }
 
-export async function getDonationsController(_req: Request, res: Response) {
-  const donations = await listDonations(CURRENT_USER);
+export async function getDonationsController(req: Request, res: Response) {
+  // Public route: no session means no "mine" — isOwner resolves to false.
+  const u = req.user;
+  const viewer = u ? { id: u.id, name: u.displayName } : { id: "", name: "" };
+  const donations = await listDonations(viewer);
 
   res.json({
     data: donations,
@@ -58,7 +63,7 @@ export async function createDonationController(req: Request, res: Response) {
   const parsed = createDonationSchema.parse(req.body);
   const donation = await createDonation(
     parsed,
-    CURRENT_USER,
+    currentUser(req),
     getUploadedPhotoUrl(req.file),
   );
 
@@ -74,7 +79,7 @@ export async function updateDonationController(req: Request, res: Response) {
   const donation = await updateDonation(
     id,
     parsed,
-    CURRENT_USER,
+    currentUser(req),
     getUploadedPhotoUrl(req.file),
   );
 
@@ -86,7 +91,7 @@ export async function updateDonationController(req: Request, res: Response) {
 export async function deleteDonationController(req: Request, res: Response) {
   const id = parseDonationId(req.params.id);
 
-  await deleteDonation(id, CURRENT_USER);
+  await deleteDonation(id, currentUser(req));
 
   res.status(204).send();
 }

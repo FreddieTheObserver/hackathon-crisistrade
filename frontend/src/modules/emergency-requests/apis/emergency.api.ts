@@ -3,7 +3,7 @@ import {
   emergencyListResponseSchema,
   emergencyResponseSchema,
 } from "../schemas/emergency.schema";
-import type { EmergencyFormPayload } from "../types/emergency.type";
+import type { EmergencyFormPayload, EmergencyStatus } from "../types/emergency.type";
 
 export const getEmergencies = async () => {
   const response = await api.get("/requests");
@@ -15,7 +15,10 @@ export const createEmergency = async (payload: EmergencyFormPayload) => {
   return emergencyResponseSchema.parse(response.data).emergency;
 };
 
-export const updateEmergency = async (id: string, payload: EmergencyFormPayload) => {
+export const updateEmergency = async (
+  id: string,
+  payload: Partial<EmergencyFormPayload> & { status?: EmergencyStatus },
+) => {
   const response = await api.patch(`/requests/${id}`, payload);
   return emergencyResponseSchema.parse(response.data).emergency;
 };
