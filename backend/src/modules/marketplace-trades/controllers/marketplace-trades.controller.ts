@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import * as tradesService from "../services/marketplace-trades.service";
+import { isAdmin } from "../../../middlewares/require-auth";
 import {
       createTradeSchema,
       updateTradeSchema,
@@ -17,8 +18,11 @@ function photoUrlFrom(req: Request): string | undefined {
 export async function createTrade(req: Request, res: Response) {
       const input = createTradeSchema.parse(req.body);
       const photoUrl = photoUrlFrom(req);
+      const user = req.user!;
       const trade = await tradesService.createTrade({
             ...input,
+            userId: user.id,
+            ownerName: user.displayName,
             ...(photoUrl ? { photoUrl } : {}),
       });
       res.status(201).json(trade);
@@ -40,16 +44,20 @@ export async function updateTrade(req: Request, res: Response) {
       const { id } = tradeIdParamSchema.parse(req.params);
       const patch = updateTradeSchema.parse(req.body);
       const photoUrl = photoUrlFrom(req);
-      const trade = await tradesService.updateTradeWithReputation(id, {
-            ...patch,
-            ...(photoUrl ? { photoUrl } : {}),
-      });
+      const trade = await tradesService.updateTradeWithReputation(
+            id,
+            { id: req.user!.id, isAdmin: isAdmin(req.user) },
+            {
+                  ...patch,
+                  ...(photoUrl ? { photoUrl } : {}),
+            },
+      );
       res.json(trade);
 }
 
 export async function deleteTrade(req: Request, res: Response) {
       const { id } = tradeIdParamSchema.parse(req.params);
-      await tradesService.deleteTrade(id);
+      await tradesService.deleteTrade(id, { id: req.user!.id, isAdmin: isAdmin(req.user) });
       res.json({ message: "Trade deleted" });
 }
 

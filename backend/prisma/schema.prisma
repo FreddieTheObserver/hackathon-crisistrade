@@ -11,7 +11,8 @@ datasource db {
 model Trade {
   id                String   @id @default(cuid())
   title             String
-  ownerName         String                          // author / reputation owner (plain string, no auth)
+  ownerName         String                          // creator's displayName (denormalized for display)
+  userId            String   @default("")           // creator's User.id (plain ref, no FK)
   offering          String                          // offer + qty, e.g. "Rice (20 kg)"
   wanting           String                          // want + qty, e.g. "Blankets (5)"
   itemType          String                          // water|food|medicine|batteries|shelter|tools|other
@@ -30,6 +31,7 @@ model Trade {
 model Trader {
   id               String   @id @default(cuid())
   name             String   @unique                 // by-name link to Trade.ownerName / counterparty (no FK)
+  userId           String?  @unique                 // links reputation to a User (null for by-name counterparties)
   reputationPoints Int      @default(0)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
@@ -66,6 +68,8 @@ model EmergencyRequest {
   contact   String
   photoUrl  String?
   isOwner   Boolean  @default(false)
+  userId    String   @default("")                    // creator's User.id (plain ref, no FK)
+  ownerName String   @default("")                     // creator's displayName (denormalized)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -78,6 +82,19 @@ model ExchangePoint {
   openTime     String
   notes        String   @default("")
   contactNotes String   @default("")
+  userId       String   @default("")                  // creator's User.id (plain ref, no FK)
+  ownerName    String   @default("")                  // creator's displayName (denormalized)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// ── Auth (shared, integration phase: branch share/auth) ────────────
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  displayName  String   @unique
+  passwordHash String
+  role         String   @default("user")              // "user" | "admin" (admins moderate any post)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }

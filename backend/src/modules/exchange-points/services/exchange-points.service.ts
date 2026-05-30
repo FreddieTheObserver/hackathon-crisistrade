@@ -23,6 +23,8 @@ const toResponse = (record: ExchangePointRecord): ExchangePointResponse => ({
   openTime: record.openTime,
   notes: record.notes,
   contactNotes: record.contactNotes,
+  userId: record.userId,
+  ownerName: record.ownerName,
   createdAt: record.createdAt.toISOString(),
   updatedAt: record.updatedAt.toISOString(),
 });
@@ -70,22 +72,35 @@ export const getExchangePoint = async (id: string): Promise<ExchangePointRespons
   return toResponse(exchangePoint);
 };
 
+const createForbiddenError = () => {
+  const error = new Error("You can only modify your own exchange points.");
+  (error as Error & { status?: number }).status = 403;
+  return error;
+};
+
 export const createExchangePoint = async (
-  payload: ExchangePointCreateInput
+  payload: ExchangePointCreateInput & { userId: string; ownerName: string }
 ): Promise<ExchangePointResponse> => {
   const exchangePoint = await prisma.exchangePoint.create({ data: payload });
 
   return toResponse(exchangePoint);
 };
 
+type Actor = { id: string; isAdmin: boolean };
+
 export const updateExchangePoint = async (
   id: string,
+  actor: Actor,
   payload: ExchangePointUpdateInput
 ): Promise<ExchangePointResponse> => {
   const existingExchangePoint = await prisma.exchangePoint.findUnique({ where: { id } });
 
   if (!existingExchangePoint) {
     throw createNotFoundError();
+  }
+
+  if (existingExchangePoint.userId !== actor.id && !actor.isAdmin) {
+    throw createForbiddenError();
   }
 
   const exchangePoint = await prisma.exchangePoint.update({
@@ -96,11 +111,15 @@ export const updateExchangePoint = async (
   return toResponse(exchangePoint);
 };
 
-export const deleteExchangePoint = async (id: string): Promise<void> => {
+export const deleteExchangePoint = async (id: string, actor: Actor): Promise<void> => {
   const existingExchangePoint = await prisma.exchangePoint.findUnique({ where: { id } });
 
   if (!existingExchangePoint) {
     throw createNotFoundError();
+  }
+
+  if (existingExchangePoint.userId !== actor.id && !actor.isAdmin) {
+    throw createForbiddenError();
   }
 
   await prisma.exchangePoint.delete({ where: { id } });

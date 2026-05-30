@@ -7,6 +7,7 @@ import type {
 type CurrentDonationUser = {
   id: string;
   name: string;
+  isAdmin?: boolean;
 };
 
 class DonationServiceError extends Error {
@@ -39,7 +40,7 @@ async function getOwnedDonation(id: number, user: CurrentDonationUser) {
     throw new DonationServiceError(404, "Donation not found");
   }
 
-  if (donation.ownerId !== user.id) {
+  if (donation.ownerId !== user.id && !user.isAdmin) {
     throw new DonationServiceError(
       403,
       "You can only modify your own donation posts",

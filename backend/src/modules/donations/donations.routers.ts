@@ -6,11 +6,12 @@ import {
   updateDonationController,
 } from "./controllers/donations.controller";
 import { donationPhotoUpload } from "./middlewares/donations.upload.middleware";
+import { requireAuth } from "../../middlewares/require-auth";
 
 export const donationsRouter = Router();
 
 // route shortcut
 donationsRouter.get("/", getDonationsController);
-donationsRouter.post("/", donationPhotoUpload, createDonationController);
-donationsRouter.patch("/:id", donationPhotoUpload, updateDonationController);
-donationsRouter.delete("/:id", deleteDonationController);
+donationsRouter.post("/", requireAuth, donationPhotoUpload, createDonationController);
+donationsRouter.patch("/:id", requireAuth, donationPhotoUpload, updateDonationController);
+donationsRouter.delete("/:id", requireAuth, deleteDonationController);
