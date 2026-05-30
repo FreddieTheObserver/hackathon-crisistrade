@@ -6,7 +6,7 @@ import { emergencyRoutes } from "./modules/emergency-requests/routers/emergency.
 import { exchangeRoutes } from "./modules/exchange/exchange.routes";
 import { profileRoutes } from "./modules/profile/routers/profile.routes";
 import { LoginPage } from "./pages/LoginPage";
-import { ProfilePage } from "./pages/ProfilePage";
+
 
 /**
  * Root browser router — Area I (coordinate before editing).
