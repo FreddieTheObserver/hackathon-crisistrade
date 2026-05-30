@@ -7,12 +7,12 @@ import EmergencyIcon from "./EmergencyIcon";
 import EmergencyUploadButton from "./EmergencyUploadButton";
 import EmergencyUploadModal from "./EmergencyUploadModal";
 import plusLogo from "../assets/PlusLogo.svg";
-import type { EmergencyPost, EmergencyUrgency } from "../types/emergency.type";
+import type { EmergencyFormPayload, EmergencyPost, EmergencyUrgency } from "../types/emergency.type";
 
 type EmergencyFormProps = {
   editingPost?: EmergencyPost | null;
   onClose: () => void;
-  onSubmit: (post: EmergencyPost) => void;
+  onSubmit: (payload: EmergencyFormPayload) => Promise<void>;
 };
 
 type EmergencyFormValues = {
@@ -23,6 +23,14 @@ type EmergencyFormValues = {
   photoUrl?: string;
   title: string;
   urgency: EmergencyUrgency | "";
+};
+
+const fieldMaxLengths = {
+  contact: 16,
+  location: 24,
+  need: 45,
+  note: 50,
+  title: 24,
 };
 
 const initialFormValues: EmergencyFormValues = {
@@ -57,10 +65,17 @@ const EmergencyForm = ({ editingPost, onClose, onSubmit }: EmergencyFormProps) =
   const [showRequiredErrors, setShowRequiredErrors] = useState(false);
 
   const updateValue = (name: string, value: string) => {
-    setValues((current) => ({ ...current, [name]: value }));
+    const maxLength = fieldMaxLengths[name as keyof typeof fieldMaxLengths];
+    const nextValue = name === "photoUrl" || !maxLength ? value : value.slice(0, maxLength);
+
+    setValues((current) => ({ ...current, [name]: nextValue }));
   };
 
-  const submitEmergency = (event: React.FormEvent<HTMLFormElement>) => {
+  const removePhoto = () => {
+    setValues((current) => ({ ...current, photoUrl: undefined }));
+  };
+
+  const submitEmergency = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const hasMissingRequiredField =
@@ -75,20 +90,17 @@ const EmergencyForm = ({ editingPost, onClose, onSubmit }: EmergencyFormProps) =
       return;
     }
 
-    onSubmit({
+    await onSubmit({
       contact: values.contact,
-      id: editingPost?.id ?? crypto.randomUUID(),
       isOwner: true,
       location: values.location,
       need: values.need,
       note: values.note,
       photoUrl: values.photoUrl,
-      status: editingPost?.status ?? "Open",
       title: values.title,
       urgency: values.urgency as EmergencyUrgency,
     });
     setValues(initialFormValues);
-    onClose();
   };
 
   const getRequiredError = (fieldName: keyof EmergencyFormValues, label: string) => {
@@ -122,6 +134,7 @@ const EmergencyForm = ({ editingPost, onClose, onSubmit }: EmergencyFormProps) =
         <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)_minmax(0,0.9fr)_minmax(0,1.05fr)_minmax(0,0.6fr)_minmax(0,0.9fr)_minmax(0,0.8fr)]">
           <EmergencyFormInput
             label="Title"
+            maxLength={fieldMaxLengths.title}
             name="title"
             onChange={updateValue}
             placeholder="e.g., Rice for Families"
@@ -137,6 +150,7 @@ const EmergencyForm = ({ editingPost, onClose, onSubmit }: EmergencyFormProps) =
                 Qty
               </span>
             }
+            maxLength={fieldMaxLengths.need}
             name="need"
             onChange={updateValue}
             placeholder="e.g., Rice (20 kg)"
@@ -146,6 +160,7 @@ const EmergencyForm = ({ editingPost, onClose, onSubmit }: EmergencyFormProps) =
           />
           <EmergencyFormInput
             label="Location"
+            maxLength={fieldMaxLengths.location}
             name="location"
             onChange={updateValue}
             placeholder="e.g., Kathmandu"
@@ -169,11 +184,13 @@ const EmergencyForm = ({ editingPost, onClose, onSubmit }: EmergencyFormProps) =
             <span className="mb-2 block text-sm font-semibold text-emerald-900">Photo</span>
             <EmergencyUploadButton
               onClick={() => setIsUploadOpen(true)}
+              onRemove={removePhoto}
               previewUrl={values.photoUrl}
             />
           </label>
           <EmergencyFormInput
             label="Note"
+            maxLength={fieldMaxLengths.note}
             name="note"
             onChange={updateValue}
             placeholder="Add a short note..."
@@ -181,6 +198,7 @@ const EmergencyForm = ({ editingPost, onClose, onSubmit }: EmergencyFormProps) =
           />
           <EmergencyFormInput
             label="Contact"
+            maxLength={fieldMaxLengths.contact}
             name="contact"
             onChange={updateValue}
             placeholder="e.g., 9801234567"

@@ -4,6 +4,7 @@ export type EmergencyStatus = "Open" | "Helped";
 
 export type EmergencyPost = {
   contact: string;
+  createdAt: string;
   id: string;
   isOwner?: boolean;
   location: string;
@@ -11,6 +12,18 @@ export type EmergencyPost = {
   note: string;
   photoUrl?: string;
   status: EmergencyStatus;
+  title: string;
+  updatedAt: string;
+  urgency: EmergencyUrgency;
+};
+
+export type EmergencyFormPayload = {
+  contact: string;
+  isOwner?: boolean;
+  location: string;
+  need: string;
+  note: string;
+  photoUrl?: string;
   title: string;
   urgency: EmergencyUrgency;
 };

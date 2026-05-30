@@ -1,5 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
+import {
+  createEmergency,
+  deleteEmergency,
+  getEmergencies,
+  markEmergencyHelped,
+  updateEmergency,
+} from "../apis/emergency.api";
 import EmergencyDeleteConfirm from "../components/EmergencyDeleteConfirm";
 import EmergencyFilters from "../components/EmergencyFilters";
 import type { EmergencyFilterValues } from "../components/EmergencyFilters";
@@ -7,43 +14,7 @@ import EmergencyForm from "../components/EmergencyForm";
 import EmergencyHeader from "../components/EmergencyHeader";
 import EmergencyList from "../components/EmergencyList";
 import EmergencyPhotoPreview from "../components/EmergencyPhotoPreview";
-import type { EmergencyPost } from "../types/emergency.type";
-
-const demoPosts: EmergencyPost[] = [
-  {
-    contact: "9801234567",
-    id: "demo-medicine",
-    isOwner: false,
-    location: "Kathmandu, Bagmati",
-    need: "Flu medicine for baby",
-    note: "I need flu medicine for my baby.",
-    status: "Open",
-    title: "Medicine (flu)",
-    urgency: "Urgent",
-  },
-  {
-    contact: "9841122334",
-    id: "demo-blankets",
-    isOwner: false,
-    location: "Anywhere, everywhere",
-    need: "Warm blankets",
-    note: "I have a newborn and it's currently snowing.",
-    status: "Helped",
-    title: "Warm Blankets",
-    urgency: "Medium",
-  },
-  {
-    contact: "9812345678",
-    id: "demo-clothes",
-    isOwner: false,
-    location: "Amanduy Orphanage Organization",
-    need: "Clothes for children",
-    note: "We ran out proper clothes for orphanage.",
-    status: "Open",
-    title: "Clothes",
-    urgency: "Low",
-  },
-];
+import type { EmergencyFormPayload, EmergencyPost } from "../types/emergency.type";
 
 const initialFilters: EmergencyFilterValues = {
   location: "All Locations",
@@ -94,25 +65,34 @@ const EmergencyPage = () => {
   const [filters, setFilters] = useState<EmergencyFilterValues>(initialFilters);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [previewPhotoUrl, setPreviewPhotoUrl] = useState<string | null>(null);
-  const [posts, setPosts] = useState<EmergencyPost[]>(demoPosts);
+  const [posts, setPosts] = useState<EmergencyPost[]>([]);
   const locationOptions = getLocationOptions(posts);
   const filteredPosts = getFilteredPosts(posts, filters);
+
+  useEffect(() => {
+    void getEmergencies().then(setPosts);
+  }, []);
 
   const closeForm = () => {
     setEditingPost(null);
     setIsFormOpen(false);
   };
 
-  const savePost = (post: EmergencyPost) => {
+  const savePost = async (payload: EmergencyFormPayload) => {
+    const savedPost = editingPost
+      ? await updateEmergency(editingPost.id, payload)
+      : await createEmergency(payload);
+
     setPosts((current) => {
-      const existingPost = current.some((item) => item.id === post.id);
+      const existingPost = current.some((item) => item.id === savedPost.id);
 
       if (existingPost) {
-        return current.map((item) => (item.id === post.id ? post : item));
+        return current.map((item) => (item.id === savedPost.id ? savedPost : item));
       }
 
-      return [post, ...current];
+      return [savedPost, ...current];
     });
+    closeForm();
   };
 
   const startEditPost = (post: EmergencyPost) => {
@@ -120,17 +100,20 @@ const EmergencyPage = () => {
     setIsFormOpen(true);
   };
 
-  const markPostHelped = (postId: string) => {
+  const markPostHelped = async (postId: string) => {
+    const helpedPost = await markEmergencyHelped(postId);
+
     setPosts((current) =>
-      current.map((post) => (post.id === postId ? { ...post, status: "Helped" } : post)),
+      current.map((post) => (post.id === postId ? helpedPost : post)),
     );
   };
 
-  const confirmDeletePost = () => {
+  const confirmDeletePost = async () => {
     if (!deletePostId) {
       return;
     }
 
+    await deleteEmergency(deletePostId);
     setPosts((current) => current.filter((post) => post.id !== deletePostId));
     setDeletePostId(null);
   };

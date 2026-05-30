@@ -23,6 +23,22 @@ const statusClassNames = {
   Open: "bg-green-100 text-green-700",
 };
 
+const getPostTimeLabel = (createdAt: string) => {
+  const createdAtTime = new Date(createdAt).getTime();
+  const diffMs = Date.now() - createdAtTime;
+  const diffHours = Math.max(0, Math.floor(diffMs / (1000 * 60 * 60)));
+
+  if (diffHours < 1) {
+    return "Just now";
+  }
+
+  if (diffHours < 24) {
+    return `${diffHours}h ago`;
+  }
+
+  return `${Math.floor(diffHours / 24)}d ago`;
+};
+
 const EmergencyCard = ({
   onDelete,
   onEdit,
@@ -76,13 +92,13 @@ const EmergencyCard = ({
           <div className="mb-4 h-32 rounded-md bg-slate-200" />
         )}
 
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex-1">
-            <h2 className="text-lg font-bold text-[#1D2A44]">{post.title}</h2>
-            <p className="mt-2 text-sm text-[#1D2A44]">{post.need}</p>
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4">
+          <div className="min-w-0 flex-1">
+            <h2 className="break-all text-lg font-bold leading-snug text-[#1D2A44]">{post.title}</h2>
+            <p className="mt-2 break-all text-sm leading-snug text-[#1D2A44]">{post.need}</p>
           </div>
 
-          <span className={`rounded-md px-2.5 py-1 text-xs font-semibold ${statusClassNames[post.status]}`}>
+          <span className={`shrink-0 rounded-md px-2.5 py-1 text-xs font-semibold ${statusClassNames[post.status]}`}>
             {post.status}
           </span>
         </div>
@@ -93,36 +109,38 @@ const EmergencyCard = ({
           </span>
         </div>
 
-        <div className="mt-5 flex flex-1 items-start justify-between gap-4">
+        <div className="mt-5 grid flex-1 grid-cols-[minmax(0,1fr)_auto] items-start gap-4">
           <div className="min-w-0">
-            <div className="flex items-center gap-2 text-sm font-semibold text-[#1D2A44]">
+            <div className="grid grid-cols-[auto_minmax(0,1fr)] items-start gap-2 text-sm font-semibold text-[#1D2A44]">
               <EmergencyIcon className="h-4 w-4 shrink-0" src={locationLogo} />
-              <span className="truncate">{post.location}</span>
+              <span className="break-all leading-snug">{post.location}</span>
             </div>
-            <p className="mt-3 line-clamp-2 text-sm text-[#1D2A44]">{post.note || "No note added."}</p>
+            <p className="mt-3 break-all text-sm leading-snug text-[#1D2A44]">{post.note || "No note added."}</p>
           </div>
 
           {post.isOwner && (
-            <div className="flex shrink-0 flex-wrap justify-end gap-2">
-              {post.status === "Open" && (
+            <div className="flex w-28 shrink-0 flex-col items-end gap-2">
+              <div className="flex gap-2">
+                {post.status === "Open" && (
+                  <button
+                    className="flex h-9 w-11 items-center justify-center rounded-md border border-slate-200 bg-white shadow-sm transition hover:border-red-300 hover:ring-2 hover:ring-red-100"
+                    onClick={() => onEdit?.(post)}
+                    type="button"
+                  >
+                    <EmergencyIcon className="h-4 w-4" src={editLogo} />
+                  </button>
+                )}
                 <button
-                  className="flex h-9 items-center justify-center rounded-md border border-slate-200 bg-white px-3 shadow-sm transition hover:border-red-300 hover:ring-2 hover:ring-red-100"
-                  onClick={() => onEdit?.(post)}
+                  className="flex h-9 w-11 items-center justify-center rounded-md border border-slate-200 bg-white shadow-sm transition hover:border-red-300 hover:ring-2 hover:ring-red-100"
+                  onClick={() => onDelete?.(post.id)}
                   type="button"
                 >
-                  <EmergencyIcon className="h-4 w-4" src={editLogo} />
+                  <EmergencyIcon className="h-4 w-4" src={trashLogo} />
                 </button>
-              )}
-              <button
-                className="flex h-9 items-center justify-center rounded-md border border-slate-200 bg-white px-3 shadow-sm transition hover:border-red-300 hover:ring-2 hover:ring-red-100"
-                onClick={() => onDelete?.(post.id)}
-                type="button"
-              >
-                <EmergencyIcon className="h-4 w-4" src={trashLogo} />
-              </button>
+              </div>
               {post.status === "Open" && (
                 <button
-                  className="group h-9 rounded-md border border-green-200 bg-green-50 px-3 text-xs font-semibold text-green-700 shadow-sm transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700 hover:ring-2 hover:ring-blue-100"
+                  className="group h-9 w-28 rounded-md border border-green-200 bg-green-50 text-xs font-semibold text-green-700 shadow-sm transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700 hover:ring-2 hover:ring-blue-100"
                   onClick={() => onMarkHelped?.(post.id)}
                   type="button"
                 >
@@ -136,9 +154,9 @@ const EmergencyCard = ({
       </div>
 
       <div className="grid grid-cols-3 items-center border-t border-slate-100 px-4 py-3 text-xs text-slate-500">
-        <span>{post.contact}</span>
+        <span className="min-w-0 break-all leading-snug">{post.contact}</span>
         <span className="text-center font-medium text-slate-400">{post.isOwner ? "Your Post" : ""}</span>
-        <span className="text-right">Just now</span>
+        <span className="text-right">{getPostTimeLabel(post.createdAt)}</span>
       </div>
     </article>
   );
