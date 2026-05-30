@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import {
   createEmergency,
@@ -7,6 +7,7 @@ import {
   markEmergencyHelped,
   updateEmergency,
 } from "../apis/emergency.api";
+import { LoadingState, ErrorState } from "../../../components/StateViews";
 import EmergencyDeleteConfirm from "../components/EmergencyDeleteConfirm";
 import EmergencyFilters from "../components/EmergencyFilters";
 import type { EmergencyFilterValues } from "../components/EmergencyFilters";
@@ -67,12 +68,26 @@ const EmergencyPage = () => {
   const [submissionError, setSubmissionError] = useState<string | null>(null);
   const [previewPhotoUrl, setPreviewPhotoUrl] = useState<string | null>(null);
   const [posts, setPosts] = useState<EmergencyPost[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const locationOptions = getLocationOptions(posts);
   const filteredPosts = getFilteredPosts(posts, filters);
 
-  useEffect(() => {
-    void getEmergencies().then(setPosts);
+  const loadPosts = useCallback(async () => {
+    setIsLoading(true);
+    setLoadError(null);
+    try {
+      setPosts(await getEmergencies());
+    } catch {
+      setLoadError("Could not load emergency requests.");
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    void loadPosts();
+  }, [loadPosts]);
 
   const closeForm = () => {
     setEditingPost(null);
@@ -160,13 +175,19 @@ const EmergencyPage = () => {
           </div>
         )}
         <div className="mt-7">
-          <EmergencyList
-            onDeletePost={setDeletePostId}
-            onEditPost={startEditPost}
-            onMarkHelped={markPostHelped}
-            onPreviewPhoto={setPreviewPhotoUrl}
-            posts={filteredPosts}
-          />
+          {isLoading ? (
+            <LoadingState label="Loading requests…" />
+          ) : loadError ? (
+            <ErrorState message={loadError} onRetry={() => void loadPosts()} />
+          ) : (
+            <EmergencyList
+              onDeletePost={setDeletePostId}
+              onEditPost={startEditPost}
+              onMarkHelped={markPostHelped}
+              onPreviewPhoto={setPreviewPhotoUrl}
+              posts={filteredPosts}
+            />
+          )}
         </div>
       </div>
       {deletePostId && (

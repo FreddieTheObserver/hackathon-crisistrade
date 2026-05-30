@@ -1,4 +1,6 @@
+import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
+import { Menu, X } from "lucide-react";
 import { useAuth } from "../auth/AuthContext";
 
 type NavTone = "trade" | "emergency" | "donation" | "location";
@@ -26,39 +28,45 @@ const navItems: NavItem[] = [
 
 const navToneClasses: Record<NavTone, { text: string; underline: string }> = {
   trade: {
-    text: "text-yellow-500 hover:text-yellow-500",
-    underline: "bg-yellow-400",
+    text: "text-trade hover:text-trade",
+    underline: "bg-trade",
   },
   emergency: {
-    text: "text-red-500 hover:text-red-500",
-    underline: "bg-red-500",
+    text: "text-emergency hover:text-emergency",
+    underline: "bg-emergency",
   },
   donation: {
-    text: "text-green-600 hover:text-green-600",
-    underline: "bg-green-500",
+    text: "text-donation hover:text-donation",
+    underline: "bg-donation",
   },
   location: {
-    text: "text-sky-600 hover:text-sky-600",
-    underline: "bg-sky-500",
+    text: "text-location hover:text-location",
+    underline: "bg-location",
   },
 };
 
 export const MainNavbar = () => {
   const location = useLocation();
   const { user } = useAuth();
+  const [menuOpen, setMenuOpen] = useState(false);
   const isAdminRoute = location.pathname.startsWith("/admin");
+
+  // Close the mobile menu whenever the route changes.
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [location.pathname]);
 
   if (isAdminRoute) {
     return null;
   }
 
   return (
-    <header className="sticky top-0 z-20 border-b border-slate-200 bg-white shadow-sm">
+    <header className="sticky top-0 z-20 border-b border-line bg-surface shadow-sm">
       <div className="mx-auto flex min-h-16 max-w-7xl items-center justify-between gap-6 px-6 py-3">
         <Link to="/" className="flex shrink-0 items-center gap-2">
           <img src="/MainLogo.png" alt="" className="h-10 w-10 object-contain" />
-          <span className="text-xl font-bold tracking-normal text-slate-900">
-            Crisis <span className="text-emerald-600">Trade</span>
+          <span className="text-xl font-bold tracking-normal text-ink">
+            Crisis <span className="text-accent">Trade</span>
           </span>
         </Link>
 
@@ -73,7 +81,7 @@ export const MainNavbar = () => {
                 className={({ isActive }) =>
                   [
                     "group relative px-1 py-2 transition-colors duration-200",
-                    isActive ? tone.text : "text-slate-600 hover:text-slate-950",
+                    isActive ? tone.text : "text-muted hover:text-ink",
                   ].join(" ")
                 }
               >
@@ -102,7 +110,7 @@ export const MainNavbar = () => {
               to="/admin"
               className={({ isActive }) =>
                 [
-                  "rounded-full border px-3 py-1.5 text-sm font-semibold transition-colors duration-200",
+                  "hidden rounded-full border px-3 py-1.5 text-sm font-semibold transition-colors duration-200 md:inline-block",
                   isActive
                     ? "border-emerald-300 bg-emerald-600 text-white"
                     : "border-emerald-200 bg-emerald-50 text-emerald-700 hover:border-emerald-300 hover:bg-emerald-100",
@@ -128,8 +136,55 @@ export const MainNavbar = () => {
           >
             {user ? initialsOf(user.displayName) : "?"}
           </NavLink>
+
+          <button
+            type="button"
+            onClick={() => setMenuOpen((open) => !open)}
+            aria-label="Toggle navigation menu"
+            aria-expanded={menuOpen}
+            className="flex h-10 w-10 items-center justify-center rounded-md border border-line text-ink transition-colors hover:bg-page md:hidden"
+          >
+            {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
         </div>
       </div>
+
+      {menuOpen && (
+        <nav className="border-t border-line bg-surface px-6 py-3 md:hidden">
+          <ul className="flex flex-col gap-1 text-sm font-semibold">
+            {navItems.map((item) => {
+              const tone = navToneClasses[item.tone];
+
+              return (
+                <li key={item.to}>
+                  <NavLink
+                    to={item.to}
+                    className={({ isActive }) =>
+                      [
+                        "block rounded-md px-3 py-2 transition-colors",
+                        isActive ? tone.text : "text-muted hover:text-ink",
+                      ].join(" ")
+                    }
+                  >
+                    {item.label}
+                  </NavLink>
+                </li>
+              );
+            })}
+
+            {user?.role === "admin" && (
+              <li>
+                <NavLink
+                  to="/admin"
+                  className="block rounded-md px-3 py-2 text-accent transition-colors hover:text-accent-strong"
+                >
+                  Admin
+                </NavLink>
+              </li>
+            )}
+          </ul>
+        </nav>
+      )}
     </header>
   );
 };

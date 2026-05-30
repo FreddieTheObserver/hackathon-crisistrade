@@ -13,6 +13,7 @@ import { TradeGrid } from "../components/TradeGrid";
 import { ConfirmDeleteDialog } from "../components/ConfirmDeleteDialog";
 import { CompleteTradeDialog } from "../components/CompleteTradeDialog";
 import { useDebouncedValue } from "../lib/useDebouncedValue";
+import { LoadingState, EmptyState, ErrorState } from "../../../components/StateViews";
 
 const EMPTY_FILTERS: TradeFilters = {
   search: "",
@@ -190,11 +191,11 @@ export function TradesPage() {
         />
 
         {loading ? (
-          <p className="text-sm text-gray-500">Loading trades…</p>
+          <LoadingState label="Loading trades…" />
         ) : loadError ? (
-          <p className="text-sm text-red-600">{loadError}</p>
+          <ErrorState message={loadError} />
         ) : trades.length === 0 ? (
-          <p className="text-sm text-gray-500">No trades yet. Add the first one.</p>
+          <EmptyState title="No trades yet" description="Add the first one." />
         ) : (
           <TradeGrid
             trades={trades}

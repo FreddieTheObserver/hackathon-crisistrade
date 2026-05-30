@@ -1,5 +1,6 @@
 import EmergencyCard from "./EmergencyCard";
 import type { EmergencyPost } from "../types/emergency.type";
+import { EmptyState } from "../../../components/StateViews";
 
 type EmergencyListProps = {
   onDeletePost: (postId: string) => void;
@@ -17,13 +18,7 @@ const EmergencyList = ({
   posts,
 }: EmergencyListProps) => {
   if (posts.length === 0) {
-    return (
-      <div className="flex min-h-40 items-center justify-center rounded-lg border border-dashed border-slate-200 bg-white px-6 py-10">
-        <p className="text-center text-sm font-medium text-slate-400">
-          No emergency requests found.
-        </p>
-      </div>
-    );
+    return <EmptyState title="No emergency requests found." />;
   }
 
   const ownerPosts = posts.filter((post) => post.isOwner);

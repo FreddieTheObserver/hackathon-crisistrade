@@ -3,6 +3,7 @@ import { getExchangePoints } from "../exchange.api";
 import { demoExchangePoints } from "../exchange.demo-data";
 import type { ExchangePoint } from "../exchange.types";
 import { ClockIcon, LocationIcon, SearchIcon, TargetIcon } from "../components/ExchangeLocationIcons";
+import { EmptyState } from "../../../components/StateViews";
 
 const allAreasOption = "All Areas";
 
@@ -189,10 +190,10 @@ const ExchangeLocationsPage = () => {
           ))}
 
           {filteredLocations.length === 0 && (
-            <div className="rounded-lg border border-dashed border-slate-300 bg-white px-6 py-10 text-center">
-              <p className="text-lg font-bold text-slate-900">No matching locations found.</p>
-              <p className="mt-2 text-sm font-medium text-slate-500">Try a different place name or area.</p>
-            </div>
+            <EmptyState
+              title="No matching locations found."
+              description="Try a different place name or area."
+            />
           )}
         </section>
       </main>

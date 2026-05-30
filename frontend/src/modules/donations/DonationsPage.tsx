@@ -9,6 +9,7 @@ import {
 import { DonationCard } from "./components/DonationCard";
 import { DonationFilters } from "./components/DonationFilters";
 import { DonationForm } from "./components/DonationForm";
+import { LoadingState, EmptyState, ErrorState } from "../../components/StateViews";
 import type {
   Donation,
   DonationFormValues,
@@ -288,17 +289,15 @@ export function DonationsPage() {
         ) : null}
 
         {error ? (
-          <div className="mb-4 rounded border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-            {error}
+          <div className="mb-4">
+            <ErrorState message={error} />
           </div>
         ) : null}
 
         {isLoading ? (
-          <p className="text-sm text-slate-500">Loading donations...</p>
+          <LoadingState label="Loading donations…" />
         ) : filteredDonations.length === 0 ? (
-          <p className="rounded border border-dashed border-slate-300 bg-white p-8 text-center text-sm text-slate-500">
-            No donations found.
-          </p>
+          <EmptyState title="No donations found." />
         ) : (
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {filteredDonations.map((donation) => (

@@ -7,6 +7,8 @@ import { exchangeRoutes } from "./modules/exchange/exchange.routes";
 import { profileRoutes } from "./modules/profile/routers/profile.routes";
 import { LoginPage } from "./pages/LoginPage";
 import { SignupPage } from "./pages/SignupPage";
+import { NotFoundPage } from "./pages/NotFoundPage";
+import { RouteErrorPage } from "./pages/RouteErrorPage";
 import ProtectedRoute from "./middlewares/ProtectedRoute";
 
 /**
@@ -31,10 +33,12 @@ import ProtectedRoute from "./middlewares/ProtectedRoute";
 
 const mainRouter = createBrowserRouter([
   { path: "/login",
-    element: <LoginPage />
+    element: <LoginPage />,
+    errorElement: <RouteErrorPage />
   },
   { path: "/signup",
-    element: <SignupPage />
+    element: <SignupPage />,
+    errorElement: <RouteErrorPage />
   },
   {
     path: "/",
@@ -43,6 +47,7 @@ const mainRouter = createBrowserRouter([
         <App />
       </ProtectedRoute>
     ),
+    errorElement: <RouteErrorPage />,
     children: [
       { index: true, element: <Navigate to="/trades" replace /> },
       // ── Board routes ──────────────────────────────────────────
@@ -64,6 +69,9 @@ const mainRouter = createBrowserRouter([
       // Profile placeholder                                         path: /profile
       ...profileRoutes,
       // ──────────────────────────────────────────────────────────
+
+      // Catch-all 404 — keep last so it only matches unknown paths.
+      { path: "*", element: <NotFoundPage /> },
     ],
   },
 ]);
