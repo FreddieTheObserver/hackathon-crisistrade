@@ -61,6 +61,7 @@ export const ProfileCard = ({
               <input
                 className={`${inputClass} max-w-sm text-3xl font-bold`}
                 onChange={(event) => onUpdateDraft("name", event.target.value)}
+                placeholder="Name"
                 value={draftProfile.name}
               />
             ) : (
@@ -78,7 +79,7 @@ export const ProfileCard = ({
                 </button>
               ) : null}
 
-              <ProfileVerifiedBadge />
+              {profile.isVerified ? <ProfileVerifiedBadge /> : null}
             </div>
           </div>
 
@@ -92,6 +93,7 @@ export const ProfileCard = ({
         <textarea
           className={`${inputClass} mx-auto mt-12 block max-w-md resize-none text-center leading-snug`}
           onChange={(event) => onUpdateDraft("bio", event.target.value)}
+          placeholder="Write a short note about yourself (optional)"
           rows={4}
           value={draftProfile.bio}
         />
@@ -120,6 +122,7 @@ export const ProfileCard = ({
             <input
               className={inputClass}
               onChange={(event) => onUpdateDraft("email", event.target.value)}
+              placeholder="Email"
               type="email"
               value={draftProfile.email}
             />
@@ -133,10 +136,11 @@ export const ProfileCard = ({
             <input
               className={inputClass}
               onChange={(event) => onUpdateDraft("location", event.target.value)}
+              placeholder="Location (optional)"
               value={draftProfile.location}
             />
           ) : (
-            profile.location
+            profile.location || "No location added"
           )}
         </ProfileInfoRow>
       </div>

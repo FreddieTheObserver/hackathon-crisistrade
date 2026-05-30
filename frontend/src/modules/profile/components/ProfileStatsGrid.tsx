@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 
+import type { ProfileStats } from "../types/profile.type";
 import { DonationIcon, SendIcon, TrendIcon } from "./ProfileIcons";
 
 type ProfileStatCardProps = {
@@ -20,12 +21,31 @@ const ProfileStatCard = ({ detail, icon, label, value }: ProfileStatCardProps) =
   );
 };
 
-export const ProfileStatsGrid = () => {
+type ProfileStatsGridProps = {
+  stats: ProfileStats;
+};
+
+export const ProfileStatsGrid = ({ stats }: ProfileStatsGridProps) => {
   return (
     <div className="grid gap-6 sm:grid-cols-3">
-      <ProfileStatCard detail="12 completed" icon={<TrendIcon />} label="Trades" value="28" />
-      <ProfileStatCard detail="8 fulfilled" icon={<SendIcon />} label="Requests" value="15" />
-      <ProfileStatCard detail="6 received" icon={<DonationIcon />} label="Donations" value="9" />
+      <ProfileStatCard
+        detail={`${stats.trades.completed} completed`}
+        icon={<TrendIcon />}
+        label="Trades"
+        value={String(stats.trades.total)}
+      />
+      <ProfileStatCard
+        detail={`${stats.requests.helped} helped`}
+        icon={<SendIcon />}
+        label="Requests"
+        value={String(stats.requests.total)}
+      />
+      <ProfileStatCard
+        detail={`${stats.donations.finished} finished`}
+        icon={<DonationIcon />}
+        label="Donations"
+        value={String(stats.donations.total)}
+      />
     </div>
   );
 };

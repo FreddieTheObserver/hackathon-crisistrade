@@ -8,6 +8,39 @@ const toMonthYear = (date: Date) => {
   }).format(date);
 };
 
+const getProfileStats = async (userId: string) => {
+  const [
+    totalTrades,
+    completedTrades,
+    totalRequests,
+    helpedRequests,
+    totalDonations,
+    finishedDonations,
+  ] = await Promise.all([
+    prisma.trade.count({ where: { userId } }),
+    prisma.trade.count({ where: { status: "completed", userId } }),
+    prisma.emergencyRequest.count({ where: { userId } }),
+    prisma.emergencyRequest.count({ where: { status: "Helped", userId } }),
+    prisma.donation.count({ where: { ownerId: userId } }),
+    prisma.donation.count({ where: { ownerId: userId, status: "TAKEN_FINISHED" } }),
+  ]);
+
+  return {
+    donations: {
+      finished: finishedDonations,
+      total: totalDonations,
+    },
+    requests: {
+      helped: helpedRequests,
+      total: totalRequests,
+    },
+    trades: {
+      completed: completedTrades,
+      total: totalTrades,
+    },
+  };
+};
+
 export const getProfileByUserId = async (userId: string) => {
   const user = await prisma.user.findUnique({ where: { id: userId } });
 
@@ -17,16 +50,20 @@ export const getProfileByUserId = async (userId: string) => {
 
   const profile = await prisma.userProfile.findUnique({ where: { userId } });
   const trader = await prisma.trader.findUnique({ where: { userId } });
+  const reputationPoints = trader?.reputationPoints ?? 0;
+  const stats = await getProfileStats(userId);
 
   return {
     bio: profile?.bio ?? "",
     email: user.email,
+    isVerified: reputationPoints >= 100,
     location: profile?.location ?? "",
     memberSince: toMonthYear(user.createdAt),
     name: user.displayName,
     phone: profile?.phone ?? "",
     profilePhotoUrl: profile?.profilePhotoUrl ?? "",
-    reputationPoints: trader?.reputationPoints ?? 0,
+    reputationPoints,
+    stats,
   };
 };
 

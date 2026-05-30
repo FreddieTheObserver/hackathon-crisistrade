@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 
 import { getMyProfile, updateMyProfile } from "../apis/profile.api";
@@ -9,12 +10,27 @@ import type { ProfileInfo } from "../types/profile.type";
 const initialProfile: ProfileInfo = {
   bio: "Community volunteer focused on helping families access essential resources during emergencies.",
   email: "arjun.kumar@example.com",
+  isVerified: true,
   location: "Kathmandu",
   memberSince: "Jan 2023",
   name: "Arjun Kumar",
   phone: "98105430",
   profilePhotoUrl: "",
   reputationPoints: 1250,
+  stats: {
+    donations: {
+      finished: 6,
+      total: 9,
+    },
+    requests: {
+      helped: 8,
+      total: 15,
+    },
+    trades: {
+      completed: 12,
+      total: 28,
+    },
+  },
 };
 
 const inputClass =
@@ -29,6 +45,18 @@ const getInitials = (name: string) => {
     .join("");
 
   return initials || "AK";
+};
+
+const getProfileValidationMessage = (profile: ProfileInfo) => {
+  if (!profile.name.trim()) {
+    return "Name is required.";
+  }
+
+  if (!profile.email.trim()) {
+    return "Email is required.";
+  }
+
+  return "";
 };
 
 export const ProfilePage = () => {
@@ -62,6 +90,12 @@ export const ProfilePage = () => {
   const saveProfile = async () => {
     setProfileError("");
 
+    const validationMessage = getProfileValidationMessage(draftProfile);
+    if (validationMessage) {
+      setProfileError(validationMessage);
+      return;
+    }
+
     try {
       const savedProfile = await updateMyProfile({
         bio: draftProfile.bio,
@@ -75,8 +109,19 @@ export const ProfilePage = () => {
       setProfile(savedProfile);
       setDraftProfile(savedProfile);
       setIsEditing(false);
-    } catch {
-      setProfileError("Profile could not be saved. Please make sure you are logged in.");
+      window.dispatchEvent(new Event("auth-changed"));
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        setProfileError("Your login session expired. Please log in again.");
+        return;
+      }
+
+      if (axios.isAxiosError(error) && error.response?.status === 409) {
+        setProfileError("Name or email is already used by another account.");
+        return;
+      }
+
+      setProfileError("Profile could not be saved. Please check the required fields.");
     }
   };
 
@@ -156,8 +201,8 @@ export const ProfilePage = () => {
           />
 
           <div className="space-y-8">
-            <ProfileReputationPanel reputationPoints={profile.reputationPoints} />
-            <ProfileStatsGrid />
+            <ProfileReputationPanel isVerified={profile.isVerified} reputationPoints={profile.reputationPoints} />
+            <ProfileStatsGrid stats={profile.stats} />
           </div>
         </section>
       </div>

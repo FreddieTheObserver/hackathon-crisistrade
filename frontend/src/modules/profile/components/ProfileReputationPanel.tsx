@@ -1,8 +1,9 @@
 type ProfileReputationPanelProps = {
+  isVerified: boolean;
   reputationPoints: number;
 };
 
-export const ProfileReputationPanel = ({ reputationPoints }: ProfileReputationPanelProps) => {
+export const ProfileReputationPanel = ({ isVerified, reputationPoints }: ProfileReputationPanelProps) => {
   return (
     <article className="flex min-h-[260px] flex-col items-center justify-center rounded-lg bg-emerald-50 px-8 py-10 text-center shadow-sm">
       <h2 className="text-xl font-bold text-emerald-800">Reputation Points</h2>
@@ -17,7 +18,9 @@ export const ProfileReputationPanel = ({ reputationPoints }: ProfileReputationPa
         <p className="text-7xl font-bold tracking-wide text-emerald-800">{reputationPoints.toLocaleString()}</p>
       </div>
 
-      <p className="mt-8 text-xl font-bold text-emerald-800">Trusted Community Member</p>
+      <p className="mt-8 text-xl font-bold text-emerald-800">
+        {isVerified ? "Trusted Community Member" : "Build reputation to become verified"}
+      </p>
     </article>
   );
 };
