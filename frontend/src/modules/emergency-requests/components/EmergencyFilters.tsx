@@ -9,7 +9,7 @@ const EmergencyFilters = () => {
         <EmergencySearchInput placeholder="Search emergency by item, keyword, or location..." />
       </div>
       <EmergencyFilterSelect label="Location" value="All Locations" />
-      <EmergencyFilterSelect label="Category" value="Categories" />
+      <EmergencyFilterSelect label="Category" value="All Categories" />
       <EmergencyFilterSelect label="Status" value="All Status" />
       <div className="lg:w-36 lg:pt-[29px]">
         <EmergencyClearFiltersButton />
