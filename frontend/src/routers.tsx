@@ -4,6 +4,7 @@ import { marketplaceTradesRoutes } from "./modules/marketplace-trades/marketplac
 import { DonationsPage } from "./modules/donations/DonationsPage";
 import { emergencyRoutes } from "./modules/emergency-requests/routers/emergency.routes";
 import { exchangeRoutes } from "./modules/exchange/exchange.routes";
+import { LoginPage } from "./pages/LoginPage";
 
 /**
  * Root browser router — Area I (coordinate before editing).
@@ -26,6 +27,9 @@ import { exchangeRoutes } from "./modules/exchange/exchange.routes";
  */
 
 const mainRouter = createBrowserRouter([
+  { path: "/login",
+    element: <LoginPage /> 
+  },
   {
     path: "/",
     element: <App />,
