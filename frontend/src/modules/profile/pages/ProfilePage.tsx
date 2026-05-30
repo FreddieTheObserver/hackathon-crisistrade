@@ -17,7 +17,7 @@ export const ProfilePage = () => {
                   AK
                 </div>
                 <button
-                  className="absolute bottom-3 right-0 flex h-10 w-10 items-center justify-center rounded-md border-4 border-white bg-[#1F2A44] text-white shadow-sm"
+                  className="absolute bottom-3 right-0 flex h-12 w-12 items-center justify-center rounded-full border-4 border-white bg-[#1F2A44] text-white shadow-md transition hover:-translate-y-0.5 hover:bg-[#263657] hover:shadow-lg hover:ring-2 hover:ring-emerald-100"
                   type="button"
                 >
                   <svg aria-hidden="true" className="h-6 w-6" fill="none" viewBox="0 0 24 24">
@@ -108,12 +108,57 @@ export const ProfilePage = () => {
           </article>
 
           <div className="space-y-8">
-            <div className="min-h-[260px] rounded-lg bg-emerald-50 shadow-sm" />
+            <article className="flex min-h-[260px] flex-col items-center justify-center rounded-lg bg-emerald-50 px-8 py-10 text-center shadow-sm">
+              <h2 className="text-xl font-bold text-emerald-800">Reputation Points</h2>
+
+              <div className="mt-8 flex items-center justify-center gap-8">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-600 text-white">
+                  <svg aria-hidden="true" className="h-9 w-9" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="m12 2.5 2.7 5.5 6.1.9-4.4 4.3 1 6.1L12 16.4l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 2.5Z" />
+                  </svg>
+                </div>
+
+                <p className="text-7xl font-bold tracking-wide text-emerald-800">1,250</p>
+              </div>
+
+              <p className="mt-8 text-xl font-bold text-emerald-800">Trusted Community Member</p>
+            </article>
 
             <div className="grid gap-6 sm:grid-cols-3">
-              <div className="min-h-[220px] rounded-lg border border-slate-200 bg-white shadow-md" />
-              <div className="min-h-[220px] rounded-lg border border-slate-200 bg-white shadow-md" />
-              <div className="min-h-[220px] rounded-lg border border-slate-200 bg-white shadow-md" />
+              <article className="flex min-h-[220px] flex-col items-center justify-center rounded-lg border border-slate-200 bg-white px-6 py-8 text-center shadow-md">
+                <svg aria-hidden="true" className="h-12 w-12 text-black" fill="none" viewBox="0 0 24 24">
+                  <path d="M3 17 9 11l4 4 8-8" stroke="currentColor" strokeWidth="1.8" />
+                  <path d="M16 7h5v5" stroke="currentColor" strokeLinecap="round" strokeWidth="1.8" />
+                </svg>
+                <p className="mt-8 text-4xl font-bold text-emerald-800">28</p>
+                <h3 className="mt-4 text-xl font-bold text-emerald-800">Trades</h3>
+                <p className="mt-4 text-sm font-medium text-[#1F2A44]">12 completed</p>
+              </article>
+
+              <article className="flex min-h-[220px] flex-col items-center justify-center rounded-lg border border-slate-200 bg-white px-6 py-8 text-center shadow-md">
+                <svg aria-hidden="true" className="h-12 w-12 text-black" fill="none" viewBox="0 0 24 24">
+                  <path d="m21 3-8.5 18-3-8.5L1 9l20-6Z" stroke="currentColor" strokeLinejoin="round" strokeWidth="1.8" />
+                </svg>
+                <p className="mt-8 text-4xl font-bold text-emerald-800">15</p>
+                <h3 className="mt-4 text-xl font-bold text-emerald-800">Requests</h3>
+                <p className="mt-4 text-sm font-medium text-[#1F2A44]">8 fulfilled</p>
+              </article>
+
+              <article className="flex min-h-[220px] flex-col items-center justify-center rounded-lg border border-slate-200 bg-white px-6 py-8 text-center shadow-md">
+                <svg aria-hidden="true" className="h-12 w-12 text-black" fill="none" viewBox="0 0 24 24">
+                  <path
+                    d="M4 12h4l3-3h4a3 3 0 0 1 3 3v1M4 12v7h8l8-4v-3l-7 2"
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="1.8"
+                  />
+                  <path d="M16 7a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" fill="currentColor" />
+                </svg>
+                <p className="mt-8 text-4xl font-bold text-emerald-800">9</p>
+                <h3 className="mt-4 text-xl font-bold text-emerald-800">Donations</h3>
+                <p className="mt-4 text-sm font-medium text-[#1F2A44]">6 received</p>
+              </article>
             </div>
           </div>
         </section>
