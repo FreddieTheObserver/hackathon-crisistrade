@@ -6,7 +6,7 @@ type EmergencyDeleteConfirmProps = {
 const EmergencyDeleteConfirm = ({ onCancel, onConfirm }: EmergencyDeleteConfirmProps) => {
   return (
     <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/20 px-6">
-      <section className="w-full max-w-md border-2 border-blue-400 bg-white px-8 py-7 shadow-xl">
+      <section className="w-full max-w-md border-2 border-red-500 bg-white px-8 py-7 shadow-xl">
         <p className="mx-auto max-w-xs text-center text-lg font-bold leading-snug text-black">
           Are you sure you want to permanently delete this post?
         </p>

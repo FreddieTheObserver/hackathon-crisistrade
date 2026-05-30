@@ -152,6 +152,7 @@ const EmergencyPage = () => {
               </div>
             )}
             <EmergencyForm
+              key={editingPost?.id ?? "new"}
               editingPost={editingPost}
               onClose={closeForm}
               onSubmit={savePost}

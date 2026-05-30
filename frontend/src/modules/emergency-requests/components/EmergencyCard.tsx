@@ -119,7 +119,7 @@ const EmergencyCard = ({
           </div>
 
           {post.isOwner && (
-            <div className="flex w-28 shrink-0 flex-col items-end gap-2">
+            <div className="flex w-24 shrink-0 flex-col items-end gap-2">
               <div className="flex gap-2">
                 {post.status === "Open" && (
                   <button
@@ -140,7 +140,7 @@ const EmergencyCard = ({
               </div>
               {post.status === "Open" && (
                 <button
-                  className="group h-9 w-28 rounded-md border border-green-200 bg-green-50 text-xs font-semibold text-green-700 shadow-sm transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700 hover:ring-2 hover:ring-blue-100"
+                  className="group h-9 w-full rounded-md border border-green-200 bg-green-50 text-xs font-semibold text-green-700 shadow-sm transition hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700 hover:ring-2 hover:ring-blue-100"
                   onClick={() => onMarkHelped?.(post.id)}
                   type="button"
                 >

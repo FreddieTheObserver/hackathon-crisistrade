@@ -143,13 +143,7 @@ const EmergencyForm = ({ editingPost, onClose, onSubmit }: EmergencyFormProps) =
             value={values.title}
           />
           <EmergencyFormInput
-            label={
-              <span className="inline-flex items-center gap-1.5">
-                Need
-                <EmergencyIcon className="h-2.5 w-2.5" src={plusLogo} />
-                Qty
-              </span>
-            }
+            label="Need + Qty"
             maxLength={fieldMaxLengths.need}
             name="need"
             onChange={updateValue}
