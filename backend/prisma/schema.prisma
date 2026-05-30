@@ -6,3 +6,27 @@ generator client {
 datasource db {
   provider = "sqlite"
 }
+
+model Trader {
+  id    Int   @id @default(autoincrement())
+  name  String  @unique
+  reputation  Int @default(0)
+  createdAt DateTime  @default(now())
+
+  trades  Trade[]
+}
+
+model Trade {
+  id    Int     @id @default(autoincrement())
+  has   String  
+  wants String 
+  area  String 
+  urgency String  @default("medium")
+  contanctNotes   String?
+  status  String  @default("available")
+  createdAt  DateTime   @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  owner Trader @relation(fields: [ownerId], references: [id])
+  ownerId Int
+}
