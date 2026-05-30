@@ -62,7 +62,7 @@ export const ProfilePage = () => {
   const [profileError, setProfileError] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const navigate = useNavigate();
-  const { logout: logoutSession, setUser } = useAuth();
+  const { logout: logoutSession, setUser, refresh } = useAuth();
   const profilePhotoInputRef = useRef<HTMLInputElement>(null);
 
   const visibleProfile = isEditing ? draftProfile : profile;
@@ -124,7 +124,9 @@ export const ProfilePage = () => {
       setProfile(savedProfile);
       setDraftProfile(savedProfile);
       setIsEditing(false);
-      window.dispatchEvent(new Event("auth-changed"));
+      // Re-sync the global session so the navbar (and anything else reading
+      // `useAuth().user`) reflects the renamed account instead of going stale.
+      await refresh();
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 401) {
         setUser(null);
@@ -168,7 +170,6 @@ export const ProfilePage = () => {
 
     try {
       await logoutSession();
-      window.dispatchEvent(new Event("auth-changed"));
       navigate("/login", { replace: true });
     } catch {
       setProfileError("Logout failed. Please try again.");

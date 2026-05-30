@@ -1,7 +1,7 @@
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 
-type NavTone = "trade" | "emergency" | "donation" | "location" | "admin";
+type NavTone = "trade" | "emergency" | "donation" | "location";
 
 /** First letters of up to two words, e.g. "Aung Kyaw" → "AK". */
 function initialsOf(name: string): string {
@@ -17,14 +17,12 @@ type NavItem = {
   tone: NavTone;
 };
 
-const mainNavItems: NavItem[] = [
+const navItems: NavItem[] = [
   { label: "Trades", to: "/trades", tone: "trade" },
   { label: "Emergency", to: "/requests", tone: "emergency" },
   { label: "Donations", to: "/donations", tone: "donation" },
   { label: "Locations", to: "/exchange-points", tone: "location" },
 ];
-
-const adminNavItem: NavItem = { label: "Admin", to: "/admin", tone: "admin" };
 
 const navToneClasses: Record<NavTone, { text: string; underline: string }> = {
   trade: {
@@ -43,17 +41,12 @@ const navToneClasses: Record<NavTone, { text: string; underline: string }> = {
     text: "text-sky-600 hover:text-sky-600",
     underline: "bg-sky-500",
   },
-  admin: {
-    text: "text-emerald-600 hover:text-emerald-600",
-    underline: "bg-emerald-500",
-  },
 };
 
 export const MainNavbar = () => {
   const location = useLocation();
   const { user } = useAuth();
   const isAdminRoute = location.pathname.startsWith("/admin");
-  const navItems = user?.role === "admin" ? [...mainNavItems, adminNavItem] : mainNavItems;
 
   if (isAdminRoute) {
     return null;
@@ -103,21 +96,39 @@ export const MainNavbar = () => {
           })}
         </nav>
 
-        <NavLink
-          to="/profile"
-          className={({ isActive }) =>
-            [
-              "flex h-10 w-10 shrink-0 items-center justify-center rounded-full border text-sm font-bold shadow-sm transition-colors duration-200",
-              isActive
-                ? "border-blue-300 bg-blue-600 text-white"
-                : "border-blue-200 bg-blue-100 text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800",
-            ].join(" ")
-          }
-          aria-label={user ? `Profile — ${user.displayName}` : "Profile"}
-          title={user?.displayName}
-        >
-          {user ? initialsOf(user.displayName) : "?"}
-        </NavLink>
+        <div className="flex shrink-0 items-center gap-3">
+          {user?.role === "admin" && (
+            <NavLink
+              to="/admin"
+              className={({ isActive }) =>
+                [
+                  "rounded-full border px-3 py-1.5 text-sm font-semibold transition-colors duration-200",
+                  isActive
+                    ? "border-emerald-300 bg-emerald-600 text-white"
+                    : "border-emerald-200 bg-emerald-50 text-emerald-700 hover:border-emerald-300 hover:bg-emerald-100",
+                ].join(" ")
+              }
+            >
+              Admin
+            </NavLink>
+          )}
+
+          <NavLink
+            to="/profile"
+            className={({ isActive }) =>
+              [
+                "flex h-10 w-10 items-center justify-center rounded-full border text-sm font-bold shadow-sm transition-colors duration-200",
+                isActive
+                  ? "border-blue-300 bg-blue-600 text-white"
+                  : "border-blue-200 bg-blue-100 text-blue-700 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800",
+              ].join(" ")
+            }
+            aria-label={user ? `Profile — ${user.displayName}` : "Profile"}
+            title={user?.displayName}
+          >
+            {user ? initialsOf(user.displayName) : "?"}
+          </NavLink>
+        </div>
       </div>
     </header>
   );
