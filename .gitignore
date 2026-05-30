@@ -19,6 +19,9 @@ backend/generated/
 *.sqlite
 *.sqlite3
 
+# User uploads
+backend/uploads/
+
 # Editor / OS
 .DS_Store
 .vscode/
