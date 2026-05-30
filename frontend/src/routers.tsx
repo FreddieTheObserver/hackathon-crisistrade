@@ -30,7 +30,7 @@ const mainRouter = createBrowserRouter([
     path: "/",
     element: <App />,
     children: [
-      { index: true, element: <Navigate to="/exchange-points" replace /> },
+      { index: true, element: <Navigate to="/trades" replace /> },
       // ── Board routes ──────────────────────────────────────────
       // Marketplace Trades  (owner: La Yaung Phyo)                  path: /trades
       ...marketplaceTradesRoutes,
