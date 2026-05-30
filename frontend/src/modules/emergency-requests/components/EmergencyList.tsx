@@ -16,6 +16,16 @@ const EmergencyList = ({
   onPreviewPhoto,
   posts,
 }: EmergencyListProps) => {
+  if (posts.length === 0) {
+    return (
+      <div className="flex min-h-40 items-center justify-center rounded-lg border border-dashed border-slate-200 bg-white px-6 py-10">
+        <p className="text-center text-sm font-medium text-slate-400">
+          No emergency requests found.
+        </p>
+      </div>
+    );
+  }
+
   const ownerPosts = posts.filter((post) => post.isOwner);
   const otherPosts = posts.filter((post) => !post.isOwner);
 
