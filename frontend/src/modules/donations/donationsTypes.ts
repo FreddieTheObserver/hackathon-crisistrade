@@ -1,0 +1,33 @@
+export type DonationStatus =
+  | "AVAILABLE"
+  | "RESERVED_PENDING"
+  | "TAKEN_FINISHED";
+
+export type Donation = {
+  id: number;
+  title: string;
+  item: string;
+  quantity: string;
+  category: string;
+  location: string;
+  availableAt: string;
+  photoUrl: string | null;
+  note: string | null;
+  contact: string;
+  status: DonationStatus;
+  ownerName: string;
+  createdAt: string;
+  isOwner: boolean;
+};
+
+export type DonationFormValues = {
+  title: string;
+  item: string;
+  quantity: string;
+  category: string;
+  location: string;
+  availableAt: string;
+  photoFile: File | null;
+  note: string;
+  contact: string;
+};

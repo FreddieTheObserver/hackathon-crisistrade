@@ -19,7 +19,7 @@ app.use(
   })
 );
 
-// serve marketplace trades photo uploads (matches multer's uploadDir)
+// serve uploaded photos (marketplace trades + donations); matches multer's uploadDir
 app.use('/uploads', express.static(path.resolve(process.cwd(), 'uploads')));
 
 app.use("", mainRouter);
