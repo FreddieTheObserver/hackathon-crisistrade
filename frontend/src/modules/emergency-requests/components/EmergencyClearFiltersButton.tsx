@@ -1,0 +1,13 @@
+const EmergencyClearFiltersButton = () => {
+  return (
+    <button
+      className="flex h-12 w-full items-center justify-center gap-3 rounded-md border border-slate-200 bg-white px-5 text-sm font-medium text-[#1D2A44] shadow-sm transition hover:border-red-300 hover:bg-slate-50 hover:ring-2 hover:ring-red-100"
+      type="button"
+    >
+      <span>x</span>
+      <span>Clear Filters</span>
+    </button>
+  );
+};
+
+export default EmergencyClearFiltersButton;
