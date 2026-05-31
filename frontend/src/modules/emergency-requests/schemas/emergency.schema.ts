@@ -11,6 +11,7 @@ export const emergencyPostSchema = z.object({
   location: z.string(),
   need: z.string(),
   note: z.string(),
+  ownerName: z.string().default(""),
   photoUrl: z.string().optional(),
   status: emergencyStatusSchema,
   title: z.string(),

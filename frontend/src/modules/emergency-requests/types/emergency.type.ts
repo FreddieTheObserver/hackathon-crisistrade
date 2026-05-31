@@ -10,6 +10,7 @@ export type EmergencyPost = {
   location: string;
   need: string;
   note: string;
+  ownerName: string;
   photoUrl?: string;
   status: EmergencyStatus;
   title: string;

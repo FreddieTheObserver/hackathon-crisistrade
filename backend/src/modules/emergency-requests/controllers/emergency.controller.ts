@@ -14,20 +14,23 @@ import {
 } from "../schemas/emergency.schema";
 import { isAdmin } from "../../../middlewares/require-auth";
 
-const getViewerId = (req: Request) => {
+type Viewer = { id: string; isAdmin: boolean };
+
+const getViewer = (req: Request): Viewer => {
   if (req.user?.id) {
-    return req.user.id;
+    return { id: req.user.id, isAdmin: isAdmin(req.user) };
   }
 
   const token = req.cookies?.token;
   if (!token) {
-    return "";
+    return { id: "", isAdmin: false };
   }
 
   try {
-    return verifyToken(token).id;
+    const user = verifyToken(token);
+    return { id: user.id, isAdmin: isAdmin(user) };
   } catch {
-    return "";
+    return { id: "", isAdmin: false };
   }
 };
 
@@ -71,6 +74,7 @@ const toEmergencyResponse = (emergency: Awaited<ReturnType<typeof createEmergenc
   location: emergency.location,
   need: emergency.need,
   note: emergency.note,
+  ownerName: emergency.ownerName,
   photoUrl: emergency.photoUrl ?? undefined,
   status: normalizeStatus(emergency.status),
   title: emergency.title,
@@ -79,10 +83,10 @@ const toEmergencyResponse = (emergency: Awaited<ReturnType<typeof createEmergenc
 });
 
 export const getEmergencies = async (req: Request, res: Response) => {
-  const emergencies = await listEmergencies();
-  const viewerId = getViewerId(req);
+  const viewer = getViewer(req);
+  const emergencies = await listEmergencies(viewer);
 
-  res.json({ emergencies: emergencies.map((emergency) => toEmergencyResponse(emergency, viewerId)) });
+  res.json({ emergencies: emergencies.map((emergency) => toEmergencyResponse(emergency, viewer.id)) });
 };
 
 export const postEmergency = async (req: Request, res: Response) => {

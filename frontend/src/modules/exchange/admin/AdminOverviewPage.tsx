@@ -182,9 +182,9 @@ function toEmergencyPost(post: EmergencyPost): AdminPost {
     contact: post.contact,
     createdAt: post.createdAt,
     id: post.id,
-    owner: post.contact,
+    owner: post.ownerName || post.contact,
     route: "/requests",
-    searchableText: [post.title, post.need, post.location, post.urgency, post.contact, post.note].join(" "),
+    searchableText: [post.title, post.ownerName, post.need, post.location, post.urgency, post.contact, post.note].join(" "),
     status: post.status,
     title: post.title,
   };
@@ -226,7 +226,7 @@ async function deletePost(post: AdminPost) {
 
 const AdminOverviewPage = () => {
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const [posts, setPosts] = useState<AdminPost[]>([]);
   const [search, setSearch] = useState("");
   const [boardFilter, setBoardFilter] = useState<BoardFilter>("all");
@@ -378,8 +378,10 @@ const AdminOverviewPage = () => {
           >
             <div className="h-10 w-10 rounded-full bg-slate-200" />
             <div>
-              <div className="font-bold">Admin</div>
-              <div className="text-sm text-emerald-300">Super Admin</div>
+              <div className="font-bold">{user?.displayName ?? "Admin"}</div>
+              <div className="text-sm text-emerald-300">
+                {user?.role === "admin" ? "Administrator" : "User"}
+              </div>
             </div>
           </NavLink>
           <button

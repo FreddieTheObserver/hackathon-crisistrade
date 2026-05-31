@@ -107,7 +107,7 @@ export const MainNavbar = () => {
         <div className="flex shrink-0 items-center gap-3">
           {user?.role === "admin" && (
             <NavLink
-              to="/admin"
+              to="/admin/overview"
               className={({ isActive }) =>
                 [
                   "hidden rounded-full border px-3 py-1.5 text-sm font-semibold transition-colors duration-200 md:inline-block",
@@ -185,7 +185,7 @@ export const MainNavbar = () => {
             {user?.role === "admin" && (
               <li>
                 <NavLink
-                  to="/admin"
+                  to="/admin/overview"
                   className="block rounded-md px-3 py-2 text-accent transition-colors hover:text-accent-strong"
                 >
                   Admin

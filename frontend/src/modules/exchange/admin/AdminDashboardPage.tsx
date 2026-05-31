@@ -67,7 +67,7 @@ const toPayload = (formValues: ExchangePointFormValues): ExchangePointPayload =>
 
 const AdminDashboardPage = () => {
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const [locations, setLocations] = useState<ExchangePoint[]>([]);
   const [formValues, setFormValues] = useState<ExchangePointFormValues>(emptyFormValues);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -294,8 +294,10 @@ const AdminDashboardPage = () => {
           >
             <div className="h-10 w-10 rounded-full bg-slate-200" />
             <div>
-              <div className="font-bold">Admin</div>
-              <div className="text-sm text-emerald-300">Super Admin</div>
+              <div className="font-bold">{user?.displayName ?? "Admin"}</div>
+              <div className="text-sm text-emerald-300">
+                {user?.role === "admin" ? "Administrator" : "User"}
+              </div>
             </div>
           </NavLink>
           <button
