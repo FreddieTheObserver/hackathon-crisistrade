@@ -53,7 +53,7 @@ export const ProfileCard = ({
           profilePhotoUrl={visibleProfile.profilePhotoUrl}
         />
 
-        <div>
+        <div className="min-w-0">
           <div>
             {isEditing ? <ProfileEditControls onCancel={onCancelEditing} onSave={onSaveProfile} /> : null}
 
@@ -91,14 +91,16 @@ export const ProfileCard = ({
 
       {isEditing ? (
         <textarea
-          className={`${inputClass} mx-auto mt-6 block max-w-md resize-none text-center leading-snug`}
+          className={`${inputClass} mx-auto mt-6 block max-w-md resize-none whitespace-pre-wrap break-words text-center leading-snug`}
           onChange={(event) => onUpdateDraft("bio", event.target.value)}
           placeholder="Write a short note about yourself (optional)"
           rows={4}
           value={draftProfile.bio}
         />
       ) : (
-        <p className="mx-auto mt-6 max-w-md text-center text-sm leading-snug text-[#1F2A44]">{profile.bio}</p>
+        <p className="mx-auto mt-6 max-w-md whitespace-pre-wrap break-words text-center text-sm leading-snug text-[#1F2A44]">
+          {profile.bio}
+        </p>
       )}
 
       <div className="my-6 border-t border-slate-200" />
