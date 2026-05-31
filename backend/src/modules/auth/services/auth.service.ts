@@ -27,8 +27,18 @@ async function toAuthUser(u: { id: string; email: string; displayName: string; r
   };
 }
 
+// Only identity claims go in the JWT. profilePhotoUrl is deliberately excluded:
+// it can be a multi-MB base64 data URI, which would push the cookie past the
+// browser's ~4KB per-cookie limit and cause it to be silently dropped (no
+// session after refresh). The photo is re-loaded from the DB in GET /auth/me.
 export function signToken(user: AuthUser): string {
-  return jwt.sign(user, JWT_SECRET as string, { expiresIn: TOKEN_TTL });
+  const claims = {
+    id: user.id,
+    email: user.email,
+    displayName: user.displayName,
+    role: user.role,
+  };
+  return jwt.sign(claims, JWT_SECRET as string, { expiresIn: TOKEN_TTL });
 }
 
 export function verifyToken(token: string): AuthUser {
