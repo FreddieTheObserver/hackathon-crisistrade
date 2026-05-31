@@ -69,15 +69,17 @@ export function DonationCard({
   onStatusChange,
 }: DonationCardProps) {
   const isAdmin = useIsAdmin();
-  // SUSPENDED/BANNED are admin-only. A plain owner only sees the normal
-  // lifecycle, and can't touch a post an admin has already moderated.
-  const moderationLocked =
-    !isAdmin && DONATION_MODERATION_STATUSES.includes(donation.status);
+  // Banned posts are locked for owners (only an admin can lift a ban). A
+  // suspended post stays editable so the owner can lift their own suspension,
+  // but they still can't move a post into a moderation state.
+  const moderationLocked = !isAdmin && donation.status === "BANNED";
   const statusOptions: DonationStatus[] = isAdmin
     ? [...DONATION_OWNER_STATUSES, ...DONATION_MODERATION_STATUSES]
     : moderationLocked
       ? [donation.status]
-      : DONATION_OWNER_STATUSES;
+      : donation.status === "SUSPENDED"
+        ? [donation.status, ...DONATION_OWNER_STATUSES]
+        : DONATION_OWNER_STATUSES;
 
   return (
     // owner cards show edit controls

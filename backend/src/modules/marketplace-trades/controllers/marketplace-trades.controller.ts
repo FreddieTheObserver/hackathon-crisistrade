@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import * as tradesService from "../services/marketplace-trades.service";
 import { isAdmin } from "../../../middlewares/require-auth";
+import { verifyToken } from "../../auth/services/auth.service";
 import {
       createTradeSchema,
       updateTradeSchema,
@@ -13,6 +14,22 @@ import {
 function photoUrlFrom(req: Request): string | undefined {
       const file = (req as Request & { file?: { filename: string } }).file;
       return file ? `/uploads/${file.filename}` : undefined;
+}
+
+// The list route is public; read the optional session to decide whether
+// moderated posts (suspended/banned) should be included for this viewer.
+function currentViewer(req: Request): { id: string; isAdmin: boolean } {
+      if (req.user) {
+            return { id: req.user.id, isAdmin: isAdmin(req.user) };
+      }
+      const token = req.cookies?.token;
+      if (!token) return { id: "", isAdmin: false };
+      try {
+            const user = verifyToken(token);
+            return { id: user.id, isAdmin: isAdmin(user) };
+      } catch {
+            return { id: "", isAdmin: false };
+      }
 }
 
 export async function createTrade(req: Request, res: Response) {
@@ -30,7 +47,7 @@ export async function createTrade(req: Request, res: Response) {
 
 export async function listTrades(req: Request, res: Response) {
       const filters = listTradesQuerySchema.parse(req.query);
-      const trades = await tradesService.listTrades(filters);
+      const trades = await tradesService.listTrades(filters, currentViewer(req));
       res.json(trades);
 }
 
