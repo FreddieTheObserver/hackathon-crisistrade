@@ -58,7 +58,7 @@ function formatTimeAgo(value: string) {
 type DonationCardProps = {
   donation: Donation;
   onEdit: (donation: Donation) => void;
-  onDelete: (id: number) => void;
+  onDelete: (donation: Donation) => void;
   onStatusChange: (id: number, status: DonationStatus) => void;
 };
 
@@ -154,7 +154,7 @@ export function DonationCard({
 
             <button
               type="button"
-              onClick={() => onDelete(donation.id)}
+              onClick={() => onDelete(donation)}
               aria-label="Delete donation"
               title="Delete donation"
               className="inline-flex h-7 w-7 items-center justify-center rounded border border-red-200 text-red-600 hover:bg-red-50"

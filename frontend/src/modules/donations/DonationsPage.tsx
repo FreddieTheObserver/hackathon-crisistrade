@@ -10,6 +10,7 @@ import {
 import { DonationCard } from "./components/DonationCard";
 import { DonationFilters } from "./components/DonationFilters";
 import { DonationForm } from "./components/DonationForm";
+import { ConfirmDeleteDialog } from "./components/ConfirmDeleteDialog";
 import { LoadingState, EmptyState, ErrorState } from "../../components/StateViews";
 import { useAuth } from "../../auth/AuthContext";
 import type {
@@ -89,6 +90,7 @@ export function DonationsPage() {
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const [deleteTarget, setDeleteTarget] = useState<Donation | null>(null);
 
   // reload after changes
   async function loadDonations() {
@@ -247,14 +249,18 @@ export function DonationsPage() {
   }
 }
 
-  async function handleDelete(id: number) {
+  async function confirmDelete() {
+    if (!deleteTarget) return;
+
     setError("");
 
     try {
-      await deleteDonation(id);
+      await deleteDonation(deleteTarget.id);
       await loadDonations();
     } catch (error) {
       setError(donationErrorMessage(error, "Could not delete donation."));
+    } finally {
+      setDeleteTarget(null);
     }
   }
 
@@ -348,12 +354,18 @@ export function DonationsPage() {
                 key={donation.id}
                 donation={donation}
                 onEdit={startEdit}
-                onDelete={handleDelete}
+                onDelete={setDeleteTarget}
                 onStatusChange={handleStatusChange}
               />
             ))}
           </div>
         )}
+
+        <ConfirmDeleteDialog
+          open={deleteTarget !== null}
+          onCancel={() => setDeleteTarget(null)}
+          onConfirm={confirmDelete}
+        />
       </section>
     </main>
   );
