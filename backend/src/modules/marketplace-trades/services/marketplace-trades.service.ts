@@ -135,15 +135,15 @@ export async function updateTradeWithReputation(id: string, actor: Actor, patch:
                   // which may be a moderating admin) and links to that account.
                   await tx.trader.upsert({
                         where: { name: ownerName },
-                        create: { name: ownerName, userId: existing.userId, reputationPoints: 1 },
-                        update: { userId: existing.userId, reputationPoints: { increment: 1 } },
+                        create: { name: ownerName, userId: existing.userId, reputationPoints: 10 },
+                        update: { userId: existing.userId, reputationPoints: { increment: 10 } },
                   });
                   // Counterparty stays by-name (typed); no user account linked.
                   // counterparty is guaranteed present here (checked above).
                   await tx.trader.upsert({
                         where: { name: counterparty as string },
-                        create: { name: counterparty as string, reputationPoints: 1 },
-                        update: { reputationPoints: { increment: 1 } },
+                        create: { name: counterparty as string, reputationPoints: 10 },
+                        update: { reputationPoints: { increment: 10 } },
                   });
             }
 
