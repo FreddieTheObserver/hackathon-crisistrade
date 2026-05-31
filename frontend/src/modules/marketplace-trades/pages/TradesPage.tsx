@@ -14,6 +14,7 @@ import { ConfirmDeleteDialog } from "../components/ConfirmDeleteDialog";
 import { CompleteTradeDialog } from "../components/CompleteTradeDialog";
 import { useDebouncedValue } from "../lib/useDebouncedValue";
 import { LoadingState, EmptyState, ErrorState } from "../../../components/StateViews";
+import { useAuth } from "../../../auth/AuthContext";
 
 const EMPTY_FILTERS: TradeFilters = {
   search: "",
@@ -33,6 +34,7 @@ function apiErrorMessage(err: unknown, fallback: string): string {
 }
 
 export function TradesPage() {
+  const { user } = useAuth();
   const [trades, setTrades] = useState<Trade[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -176,6 +178,9 @@ export function TradesPage() {
           editingTrade={editingTrade}
           submitting={submitting}
           error={formError}
+          initialArea={user?.location ?? ""}
+          initialContact={user?.phone || user?.email || ""}
+          initialOwnerName={user?.displayName ?? ""}
           onCancel={() => {
             setFormOpen(false);
             setEditingTrade(null);

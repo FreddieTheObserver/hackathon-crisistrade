@@ -9,6 +9,8 @@ import type { EmergencyFormPayload, EmergencyPost, EmergencyUrgency } from "../t
 
 type EmergencyFormProps = {
   editingPost?: EmergencyPost | null;
+  initialContact?: string;
+  initialLocation?: string;
   onClose: () => void;
   onSubmit: (payload: EmergencyFormPayload) => Promise<void>;
 };
@@ -41,9 +43,16 @@ const initialFormValues: EmergencyFormValues = {
   urgency: "",
 };
 
-const getInitialValues = (post?: EmergencyPost | null): EmergencyFormValues => {
+const getInitialValues = (
+  post?: EmergencyPost | null,
+  defaults?: Pick<EmergencyFormValues, "contact" | "location">,
+): EmergencyFormValues => {
   if (!post) {
-    return initialFormValues;
+    return {
+      ...initialFormValues,
+      contact: defaults?.contact ?? "",
+      location: defaults?.location ?? "",
+    };
   }
 
   return {
@@ -57,8 +66,19 @@ const getInitialValues = (post?: EmergencyPost | null): EmergencyFormValues => {
   };
 };
 
-const EmergencyForm = ({ editingPost, onClose, onSubmit }: EmergencyFormProps) => {
-  const [values, setValues] = useState<EmergencyFormValues>(() => getInitialValues(editingPost));
+const EmergencyForm = ({
+  editingPost,
+  initialContact = "",
+  initialLocation = "",
+  onClose,
+  onSubmit,
+}: EmergencyFormProps) => {
+  const [values, setValues] = useState<EmergencyFormValues>(() =>
+    getInitialValues(editingPost, {
+      contact: initialContact.slice(0, fieldMaxLengths.contact),
+      location: initialLocation.slice(0, fieldMaxLengths.location),
+    }),
+  );
   const [showRequiredErrors, setShowRequiredErrors] = useState(false);
 
   const updateValue = (name: string, value: string) => {
@@ -99,7 +119,11 @@ const EmergencyForm = ({ editingPost, onClose, onSubmit }: EmergencyFormProps) =
       title: values.title,
       urgency: values.urgency as EmergencyUrgency,
     });
-    setValues(initialFormValues);
+    setValues({
+      ...initialFormValues,
+      contact: initialContact.slice(0, fieldMaxLengths.contact),
+      location: initialLocation.slice(0, fieldMaxLengths.location),
+    });
   };
 
   const getRequiredError = (fieldName: keyof EmergencyFormValues, label: string) => {

@@ -23,6 +23,9 @@ interface AddTradeFormProps {
   editingTrade: Trade | null;
   submitting: boolean;
   error: string | null;
+  initialArea?: string;
+  initialContact?: string;
+  initialOwnerName?: string;
   onCancel: () => void;
   onSubmit: (formData: FormData) => void;
 }
@@ -35,6 +38,9 @@ export function AddTradeForm({
   editingTrade,
   submitting,
   error,
+  initialArea = "",
+  initialContact = "",
+  initialOwnerName = "",
   onCancel,
   onSubmit,
 }: AddTradeFormProps) {
@@ -58,11 +64,16 @@ export function AddTradeForm({
         note: editingTrade.note ?? "",
       });
     } else {
-      setValues(EMPTY_VALUES);
+      setValues({
+        ...EMPTY_VALUES,
+        area: initialArea,
+        contact: initialContact,
+        ownerName: initialOwnerName,
+      });
     }
     setPhoto(null);
     setFieldErrors({});
-  }, [editingTrade, open]);
+  }, [editingTrade, initialArea, initialContact, initialOwnerName, open]);
 
   if (!open) return null;
 

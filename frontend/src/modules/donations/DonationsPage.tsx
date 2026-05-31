@@ -11,6 +11,7 @@ import { DonationCard } from "./components/DonationCard";
 import { DonationFilters } from "./components/DonationFilters";
 import { DonationForm } from "./components/DonationForm";
 import { LoadingState, EmptyState, ErrorState } from "../../components/StateViews";
+import { useAuth } from "../../auth/AuthContext";
 import type {
   Donation,
   DonationFormValues,
@@ -76,6 +77,7 @@ const requiredFieldMessages: DonationFormErrors = {
 };
 
 export function DonationsPage() {
+  const { user } = useAuth();
   const [donations, setDonations] = useState<Donation[]>([]);
   const [formValues, setFormValues] = useState<DonationFormValues>(emptyForm);
   const [formErrors, setFormErrors] = useState<DonationFormErrors>({});
@@ -180,6 +182,14 @@ export function DonationsPage() {
     setIsFormOpen(false);
   }
 
+  function getProfilePrefilledForm(): DonationFormValues {
+    return {
+      ...emptyForm,
+      contact: user?.phone || user?.email || "",
+      location: user?.location ?? "",
+    };
+  }
+
   function startEdit(donation: Donation) {
     // open the same form with this post loaded
     setEditingId(donation.id);
@@ -280,7 +290,8 @@ export function DonationsPage() {
             onClick={() => {
               setIsFormOpen(true);
               setEditingId(null);
-              setFormValues(emptyForm);
+              setFormValues(getProfilePrefilledForm());
+              setFormErrors({});
             }}
             className="rounded bg-emerald-700 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-800"
           >

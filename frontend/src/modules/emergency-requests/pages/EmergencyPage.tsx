@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 
+import { useAuth } from "../../../auth/AuthContext";
 import {
   createEmergency,
   deleteEmergency,
@@ -61,6 +62,7 @@ const getFilteredPosts = (posts: EmergencyPost[], filters: EmergencyFilterValues
 };
 
 const EmergencyPage = () => {
+  const { user } = useAuth();
   const [deletePostId, setDeletePostId] = useState<string | null>(null);
   const [editingPost, setEditingPost] = useState<EmergencyPost | null>(null);
   const [filters, setFilters] = useState<EmergencyFilterValues>(initialFilters);
@@ -169,6 +171,8 @@ const EmergencyPage = () => {
             <EmergencyForm
               key={editingPost?.id ?? "new"}
               editingPost={editingPost}
+              initialContact={user?.phone ?? ""}
+              initialLocation={user?.location ?? ""}
               onClose={closeForm}
               onSubmit={savePost}
             />

@@ -14,7 +14,7 @@ function httpError(status: number, message: string): never {
 
 async function toAuthUser(u: { id: string; email: string; displayName: string; role: string }): Promise<AuthUser> {
   const profile = await prisma.userProfile.findUnique({
-    select: { profilePhotoUrl: true },
+    select: { location: true, phone: true, profilePhotoUrl: true },
     where: { userId: u.id },
   });
 
@@ -22,6 +22,8 @@ async function toAuthUser(u: { id: string; email: string; displayName: string; r
     id: u.id,
     email: u.email,
     displayName: u.displayName,
+    location: profile?.location ?? "",
+    phone: profile?.phone ?? "",
     profilePhotoUrl: profile?.profilePhotoUrl ?? "",
     role: u.role,
   };
@@ -47,6 +49,8 @@ export function verifyToken(token: string): AuthUser {
     id: decoded.id,
     email: decoded.email,
     displayName: decoded.displayName,
+    location: "",
+    phone: "",
     profilePhotoUrl: decoded.profilePhotoUrl ?? "",
     role: decoded.role ?? "user",
   };
@@ -75,6 +79,8 @@ export async function registerUser(input: {
     id: user.id,
     email: user.email,
     displayName: user.displayName,
+    location: "",
+    phone: "",
     profilePhotoUrl: "",
     role: user.role,
   };
