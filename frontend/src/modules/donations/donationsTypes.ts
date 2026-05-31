@@ -5,6 +5,18 @@ export type DonationStatus =
   | "SUSPENDED"
   | "BANNED";
 
+// SUSPENDED/BANNED are admin-only moderation states; owners only manage the
+// normal lifecycle below. Used to gate the status dropdown on the card.
+export const DONATION_OWNER_STATUSES: DonationStatus[] = [
+  "AVAILABLE",
+  "RESERVED_PENDING",
+  "TAKEN_FINISHED",
+];
+export const DONATION_MODERATION_STATUSES: DonationStatus[] = [
+  "SUSPENDED",
+  "BANNED",
+];
+
 export type Donation = {
   id: number;
   title: string;

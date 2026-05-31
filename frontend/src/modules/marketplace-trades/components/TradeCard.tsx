@@ -1,8 +1,8 @@
 import type { Trade, ItemType, Status } from '../types/marketplace-trades.types';
-import { STATUSES } from '../schemas/marketplace-trades.schemas';
-import { StatusBadge } from './StatusBadge';
+import { STATUSES, OWNER_STATUSES, MODERATION_STATUSES } from '../schemas/marketplace-trades.schemas';
+import { StatusBadge, STATUS_LABELS } from './StatusBadge';
 import { timeAgo } from '../lib/timeAgo';
-import { useCanManage } from '../../../auth/AuthContext';
+import { useCanManage, useIsAdmin } from '../../../auth/AuthContext';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -36,6 +36,16 @@ export function TradeCard({
       // Only the owner (or an admin) may change status / edit / delete; the
       // backend enforces this too (403 otherwise), this just hides dead controls.
       const canManage = useCanManage(trade.userId)
+      const isAdmin = useIsAdmin()
+      // suspended/banned are admin-only. A plain owner only ever sees the normal
+      // lifecycle states, and can't touch a post an admin has already moderated.
+      const moderationLocked =
+            !isAdmin && (MODERATION_STATUSES as readonly string[]).includes(trade.status)
+      const statusOptions: readonly string[] = isAdmin
+            ? STATUSES
+            : moderationLocked
+                  ? [trade.status]
+                  : OWNER_STATUSES
 
       return (
             <article
@@ -99,11 +109,13 @@ export function TradeCard({
                               <select
                                     value={trade.status}
                                     onChange={(e) => onStatusChange(trade, e.target.value as Status)}
-                                    className="rounded-md border border-gray-300 px-2 py-1 text-xs text-gray-700 focus:border-green-500 focus:outline-none"
+                                    disabled={moderationLocked}
+                                    title={moderationLocked ? "Moderated by an admin" : undefined}
+                                    className="rounded-md border border-gray-300 px-2 py-1 text-xs text-gray-700 focus:border-green-500 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400"
                               >
-                                    {STATUSES.map((status) => (
+                                    {statusOptions.map((status) => (
                                           <option key={status} value={status}>
-                                                {status}
+                                                {STATUS_LABELS[status as Status]}
                                           </option>
                                     ))}
                               </select>

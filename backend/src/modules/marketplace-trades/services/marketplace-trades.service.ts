@@ -1,9 +1,20 @@
 import { prisma } from "../../../db";
+import { MODERATION_STATUSES } from "../schemas/marketplace-trades.schema";
 import type {
       CreateTradeInput,
       UpdateTradeInput,
       ListTradesQuery,
 } from "../types/marketplace-trades.types";
+
+const MODERATION_STATUS_SET = new Set<string>(MODERATION_STATUSES);
+
+function isModerationStatus(status: string | null | undefined): boolean {
+      return status != null && MODERATION_STATUS_SET.has(status);
+}
+
+function forbidden(message: string): never {
+      throw Object.assign(new Error(message), { status: 403 });
+}
 
 // photoUrl is derived server-side from the upload, and userId/ownerName are
 // stamped from the session user — so they ride alongside the validated body
@@ -67,6 +78,13 @@ export async function updateTradeWithReputation(id: string, actor: Actor, patch:
 
             if (existing.userId !== actor.id && !actor.isAdmin) {
                   throw Object.assign(new Error("You can only modify your own trades."), { status: 403 });
+            }
+
+            // Moderation states (suspended/banned) are admin-only — in both
+            // directions. A plain owner can neither set one nor edit a post an
+            // admin has already moderated.
+            if (!actor.isAdmin && (isModerationStatus(patch.status) || isModerationStatus(existing.status))) {
+                  forbidden("Only an admin can change a post's moderation status.");
             }
 
             const ownerName = existing.ownerName;

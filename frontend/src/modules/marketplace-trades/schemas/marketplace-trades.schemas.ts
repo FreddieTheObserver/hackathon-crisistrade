@@ -19,6 +19,10 @@ export const ITEM_TYPES = [
 
 export const URGENCIES = ["low", "medium", "high", "critical"] as const;
 export const STATUSES = ["available", "pending", "completed", "unavailable", "suspended", "banned"] as const;
+// suspended/banned are admin-only moderation states; everything else is the
+// normal owner-managed lifecycle. Owners only get OWNER_STATUSES in the UI.
+export const MODERATION_STATUSES = ["suspended", "banned"] as const;
+export const OWNER_STATUSES = ["available", "pending", "completed", "unavailable"] as const;
 
 export type ItemType = (typeof ITEM_TYPES)[number];
 export type Urgency = (typeof URGENCIES)[number];

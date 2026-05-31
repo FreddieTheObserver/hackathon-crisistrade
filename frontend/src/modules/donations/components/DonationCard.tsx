@@ -1,5 +1,10 @@
 import { Pencil, Trash2 } from "lucide-react";
 import type { Donation, DonationStatus } from "../donationsTypes";
+import {
+  DONATION_OWNER_STATUSES,
+  DONATION_MODERATION_STATUSES,
+} from "../donationsTypes";
+import { useIsAdmin } from "../../../auth/AuthContext";
 
 const statusLabels: Record<DonationStatus, string> = {
   AVAILABLE: "Available",
@@ -63,6 +68,17 @@ export function DonationCard({
   onDelete,
   onStatusChange,
 }: DonationCardProps) {
+  const isAdmin = useIsAdmin();
+  // SUSPENDED/BANNED are admin-only. A plain owner only sees the normal
+  // lifecycle, and can't touch a post an admin has already moderated.
+  const moderationLocked =
+    !isAdmin && DONATION_MODERATION_STATUSES.includes(donation.status);
+  const statusOptions: DonationStatus[] = isAdmin
+    ? [...DONATION_OWNER_STATUSES, ...DONATION_MODERATION_STATUSES]
+    : moderationLocked
+      ? [donation.status]
+      : DONATION_OWNER_STATUSES;
+
   return (
     // owner cards show edit controls
     <article
@@ -158,13 +174,15 @@ export function DonationCard({
                 event.target.value as DonationStatus,
               )
             }
-            className="rounded border border-slate-200 px-2 py-1 text-xs"
+            disabled={moderationLocked}
+            title={moderationLocked ? "Moderated by an admin" : undefined}
+            className="rounded border border-slate-200 px-2 py-1 text-xs disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400"
           >
-            <option value="AVAILABLE">Available</option>
-            <option value="RESERVED_PENDING">Reserved/Pending</option>
-            <option value="TAKEN_FINISHED">Taken/Finished</option>
-            <option value="SUSPENDED">Suspended</option>
-            <option value="BANNED">Banned</option>
+            {statusOptions.map((status) => (
+              <option key={status} value={status}>
+                {statusLabels[status]}
+              </option>
+            ))}
           </select>
 
           <span className="text-xs text-slate-400">
