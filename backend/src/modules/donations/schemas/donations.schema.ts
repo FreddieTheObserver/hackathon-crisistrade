@@ -8,6 +8,10 @@ export const donationStatusSchema = z.enum([
   "BANNED",
 ]);
 
+// SUSPENDED/BANNED are moderation-only states: only an admin may move a post
+// into or out of them. Enforced server-side in the service layer.
+export const DONATION_MODERATION_STATUSES = ["SUSPENDED", "BANNED"] as const;
+
 // create request rules
 export const createDonationSchema = z.object({
   title: z.string().min(1, "Title is required"),

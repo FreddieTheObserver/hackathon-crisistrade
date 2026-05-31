@@ -5,6 +5,9 @@ import { z } from "zod";
 export const ITEM_TYPES = ["water", "food", "medicine", "batteries", "shelter", "tools", "other"] as const;
 export const URGENCIES = ["low", "medium", "high", "critical"] as const;
 export const STATUSES = ["available", "pending", "completed", "unavailable", "suspended", "banned"] as const;
+// suspended/banned are moderation-only states: only an admin may move a post
+// into or out of them. Enforced server-side in the service layer.
+export const MODERATION_STATUSES = ["suspended", "banned"] as const;
 
 export const createTradeSchema = z.object({
       title: z.string().trim().min(1).max(120),

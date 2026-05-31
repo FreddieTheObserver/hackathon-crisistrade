@@ -1,8 +1,15 @@
 import { prisma } from "../../../db";
-import type {
-  CreateDonationInput,
-  UpdateDonationInput,
+import {
+  DONATION_MODERATION_STATUSES,
+  type CreateDonationInput,
+  type UpdateDonationInput,
 } from "../schemas/donations.schema";
+
+const MODERATION_STATUS_SET = new Set<string>(DONATION_MODERATION_STATUSES);
+
+function isModerationStatus(status: string | null | undefined): boolean {
+  return status != null && MODERATION_STATUS_SET.has(status);
+}
 
 type CurrentDonationUser = {
   id: string;
@@ -81,7 +88,20 @@ export async function updateDonation(
   user: CurrentDonationUser,
   uploadedPhotoUrl: string | null,
 ) {
-  await getOwnedDonation(id, user);
+  const existing = await getOwnedDonation(id, user);
+
+  // Moderation states (SUSPENDED/BANNED) are admin-only — in both directions.
+  // A plain owner can neither set one nor edit a post an admin has moderated.
+  if (
+    !user.isAdmin &&
+    (isModerationStatus(data.status) || isModerationStatus(existing.status))
+  ) {
+    throw new DonationServiceError(
+      403,
+      "Only an admin can change a post's moderation status",
+    );
+  }
+
   // keep old photo if no new upload
   const photoUpdate = uploadedPhotoUrl ? { photoUrl: uploadedPhotoUrl } : {};
 

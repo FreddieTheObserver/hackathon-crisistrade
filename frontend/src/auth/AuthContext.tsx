@@ -73,3 +73,14 @@ export function useCanManage(ownerId?: string | null): boolean {
   if (!user) return false;
   return user.role === "admin" || (ownerId != null && user.id === ownerId);
 }
+
+/**
+ * Whether the current user is a moderator (admin). Only admins may move a post
+ * into/out of the moderation-only states (suspended/banned); plain owners are
+ * limited to the normal lifecycle states. Mirrors the backend `isAdmin` check.
+ */
+// eslint-disable-next-line react-refresh/only-export-components
+export function useIsAdmin(): boolean {
+  const { user } = useAuth();
+  return user?.role === "admin";
+}
