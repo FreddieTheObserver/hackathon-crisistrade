@@ -1,5 +1,5 @@
 import type { Trade, ItemType, Status } from '../types/marketplace-trades.types';
-import { STATUSES, OWNER_STATUSES, MODERATION_STATUSES } from '../schemas/marketplace-trades.schemas';
+import { STATUSES, OWNER_STATUSES } from '../schemas/marketplace-trades.schemas';
 import { StatusBadge, STATUS_LABELS } from './StatusBadge';
 import { timeAgo } from '../lib/timeAgo';
 import { useCanManage, useIsAdmin } from '../../../auth/AuthContext';
@@ -37,15 +37,17 @@ export function TradeCard({
       // backend enforces this too (403 otherwise), this just hides dead controls.
       const canManage = useCanManage(trade.userId)
       const isAdmin = useIsAdmin()
-      // suspended/banned are admin-only. A plain owner only ever sees the normal
-      // lifecycle states, and can't touch a post an admin has already moderated.
-      const moderationLocked =
-            !isAdmin && (MODERATION_STATUSES as readonly string[]).includes(trade.status)
+      // Banned posts are locked for owners (only an admin can lift a ban). A
+      // suspended post stays editable so the owner can lift their own
+      // suspension, but they still can't move a post into a moderation state.
+      const moderationLocked = !isAdmin && trade.status === "banned"
       const statusOptions: readonly string[] = isAdmin
             ? STATUSES
             : moderationLocked
                   ? [trade.status]
-                  : OWNER_STATUSES
+                  : trade.status === "suspended"
+                        ? [trade.status, ...OWNER_STATUSES]
+                        : OWNER_STATUSES
 
       return (
             <article

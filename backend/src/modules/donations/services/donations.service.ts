@@ -58,7 +58,17 @@ async function getOwnedDonation(id: number, user: CurrentDonationUser) {
 }
 
 export async function listDonations(user: CurrentDonationUser) {
+  // Moderated posts (SUSPENDED/BANNED) are visible only to admins and to their
+  // own owner; hidden from everyone else on the public board.
   const donations = await prisma.donation.findMany({
+    where: user.isAdmin
+      ? {}
+      : {
+          OR: [
+            { status: { notIn: [...DONATION_MODERATION_STATUSES] } },
+            { ownerId: user.id },
+          ],
+        },
     orderBy: { createdAt: "desc" },
   });
 
@@ -90,16 +100,22 @@ export async function updateDonation(
 ) {
   const existing = await getOwnedDonation(id, user);
 
-  // Moderation states (SUSPENDED/BANNED) are admin-only — in both directions.
-  // A plain owner can neither set one nor edit a post an admin has moderated.
-  if (
-    !user.isAdmin &&
-    (isModerationStatus(data.status) || isModerationStatus(existing.status))
-  ) {
-    throw new DonationServiceError(
-      403,
-      "Only an admin can change a post's moderation status",
-    );
+  // Owners may never move a post into a moderation state, and may not touch a
+  // banned post at all (only an admin can lift a ban). A suspended post stays
+  // editable so the owner can lift their own suspension.
+  if (!user.isAdmin) {
+    if (isModerationStatus(data.status)) {
+      throw new DonationServiceError(
+        403,
+        "Only an admin can suspend or ban a post",
+      );
+    }
+    if (existing.status === "BANNED") {
+      throw new DonationServiceError(
+        403,
+        "This post was banned by an admin and can only be changed by an admin",
+      );
+    }
   }
 
   // keep old photo if no new upload

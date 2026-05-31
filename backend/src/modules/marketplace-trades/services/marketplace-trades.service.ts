@@ -30,7 +30,10 @@ function badRequest(message: string): never {
       throw Object.assign(new Error(message), { status: 400 });
 }
 
-export async function listTrades(filters: ListTradesQuery) {
+export async function listTrades(
+      filters: ListTradesQuery,
+      viewer: { id: string; isAdmin: boolean } = { id: "", isAdmin: false },
+) {
       const { area, urgency, itemType, status, search } = filters;
 
       return prisma.trade.findMany({
@@ -39,16 +42,32 @@ export async function listTrades(filters: ListTradesQuery) {
                   ...(urgency ? { urgency } : {}),
                   ...(itemType ? { itemType } : {}),
                   ...(status ? { status } : {}),
-                  ...(search
-                        ? {
-                                OR: [
-                                      { title: { contains: search } },
-                                      { offering: { contains: search } },
-                                      { wanting: { contains: search } },
-                                      { note: { contains: search } },
-                                ],
-                          }
-                        : {}),
+                  AND: [
+                        ...(search
+                              ? [
+                                      {
+                                            OR: [
+                                                  { title: { contains: search } },
+                                                  { offering: { contains: search } },
+                                                  { wanting: { contains: search } },
+                                                  { note: { contains: search } },
+                                            ],
+                                      },
+                                ]
+                              : []),
+                        // Moderated posts (suspended/banned) are visible only to
+                        // admins and to their own owner; hidden from everyone else.
+                        ...(viewer.isAdmin
+                              ? []
+                              : [
+                                      {
+                                            OR: [
+                                                  { status: { notIn: [...MODERATION_STATUSES] } },
+                                                  { userId: viewer.id },
+                                            ],
+                                      },
+                                ]),
+                  ],
             },
             orderBy: { createdAt: "desc" },
       });
@@ -80,11 +99,17 @@ export async function updateTradeWithReputation(id: string, actor: Actor, patch:
                   throw Object.assign(new Error("You can only modify your own trades."), { status: 403 });
             }
 
-            // Moderation states (suspended/banned) are admin-only — in both
-            // directions. A plain owner can neither set one nor edit a post an
-            // admin has already moderated.
-            if (!actor.isAdmin && (isModerationStatus(patch.status) || isModerationStatus(existing.status))) {
-                  forbidden("Only an admin can change a post's moderation status.");
+            // Owners may never move a post into a moderation state, and may not
+            // touch a banned post at all (only an admin can lift a ban). A
+            // suspended post stays editable so the owner can lift their own
+            // suspension by moving it back to a normal lifecycle state.
+            if (!actor.isAdmin) {
+                  if (isModerationStatus(patch.status)) {
+                        forbidden("Only an admin can suspend or ban a post.");
+                  }
+                  if (existing.status === "banned") {
+                        forbidden("This post was banned by an admin and can only be changed by an admin.");
+                  }
             }
 
             const ownerName = existing.ownerName;
