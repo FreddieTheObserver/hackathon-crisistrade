@@ -13,6 +13,16 @@ import type { ProfileInfo } from "../types/profile.type";
 const inputClass =
   "w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-[#1F2A44] shadow-sm outline-none transition focus:border-emerald-300 focus:ring-2 focus:ring-emerald-100";
 
+const profileLimits = {
+  bio: 180,
+  email: 120,
+  location: 60,
+  name: 60,
+  phone: 24,
+  profilePhotoChars: 5_000_000,
+  profilePhotoFileMb: 3.5,
+};
+
 const getInitials = (name: string) => {
   const initials = name
     .trim()
@@ -33,6 +43,30 @@ const getProfileValidationMessage = (profile: ProfileInfo) => {
     return "Email is required.";
   }
 
+  if (profile.name.trim().length > profileLimits.name) {
+    return `Name must be ${profileLimits.name} characters or fewer.`;
+  }
+
+  if (profile.email.trim().length > profileLimits.email) {
+    return `Email must be ${profileLimits.email} characters or fewer.`;
+  }
+
+  if (profile.phone.trim().length > profileLimits.phone) {
+    return `Number must be ${profileLimits.phone} characters or fewer.`;
+  }
+
+  if (profile.location.trim().length > profileLimits.location) {
+    return `Location must be ${profileLimits.location} characters or fewer.`;
+  }
+
+  if (profile.bio.trim().length > profileLimits.bio) {
+    return `Bio must be ${profileLimits.bio} characters or fewer.`;
+  }
+
+  if (profile.profilePhotoUrl.length > profileLimits.profilePhotoChars) {
+    return `Profile photo is too large. Upload an image smaller than ${profileLimits.profilePhotoFileMb} MB.`;
+  }
+
   return "";
 };
 
@@ -42,7 +76,17 @@ const getProfileSaveErrorMessage = (error: unknown) => {
   }
 
   if (axios.isAxiosError(error)) {
-    const data = error.response?.data as { issues?: { message?: string }[]; message?: string } | undefined;
+    const data = error.response?.data as { issues?: { message?: string }[]; message?: string } | string | undefined;
+
+    if (error.response?.status === 413) {
+      return `Profile photo is too large. Upload an image smaller than ${profileLimits.profilePhotoFileMb} MB.`;
+    }
+
+    if (typeof data === "string") {
+      return data.includes("too large")
+        ? `Profile photo is too large. Upload an image smaller than ${profileLimits.profilePhotoFileMb} MB.`
+        : "Profile could not be saved. Please try again.";
+    }
 
     if (data?.issues?.[0]?.message) {
       return data.issues[0].message;
@@ -156,9 +200,26 @@ export const ProfilePage = () => {
       return;
     }
 
+    const maxBytes = profileLimits.profilePhotoFileMb * 1024 * 1024;
+    if (file.size > maxBytes) {
+      setProfileError(`Profile photo is too large. Upload an image smaller than ${profileLimits.profilePhotoFileMb} MB.`);
+      if (profilePhotoInputRef.current) {
+        profilePhotoInputRef.current.value = "";
+      }
+      return;
+    }
+
     const reader = new FileReader();
     reader.onload = () => {
       if (typeof reader.result === "string") {
+        if (reader.result.length > profileLimits.profilePhotoChars) {
+          setProfileError(
+            `Profile photo is too large. Upload an image smaller than ${profileLimits.profilePhotoFileMb} MB.`,
+          );
+          return;
+        }
+
+        setProfileError("");
         updateDraft("profilePhotoUrl", reader.result);
       }
     };

@@ -9,8 +9,8 @@ import { errorHandler } from "./middlewares/error_handler";
 const app = express();
 const PORT = process.env.PORT ?? 3000;
 
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+app.use(express.urlencoded({ extended: true, limit: "6mb" }));
+app.use(express.json({ limit: "6mb" }));
 app.use(cookieParser());
 app.use(
   cors({

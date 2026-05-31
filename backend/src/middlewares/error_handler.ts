@@ -4,6 +4,7 @@ import { MulterError } from "multer";
 
 interface AppError extends Error {
   status?: number;
+  type?: string;
 }
 
 export function errorHandler(
@@ -34,7 +35,10 @@ export function errorHandler(
   }
 
   const status = err.status ?? 500;
-  const message = err.message ?? "Internal server error";
+  const message =
+    status === 413 || err.type === "entity.too.large"
+      ? "Profile photo is too large. Upload an image smaller than 3.5 MB."
+      : err.message ?? "Internal server error";
 
   console.error(`[${status}] ${message}`);
 
