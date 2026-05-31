@@ -5,26 +5,33 @@ type EmergencyDeleteConfirmProps = {
 
 const EmergencyDeleteConfirm = ({ onCancel, onConfirm }: EmergencyDeleteConfirmProps) => {
   return (
-    <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/20 px-6">
-      <section className="w-full max-w-md border-2 border-red-500 bg-white px-8 py-7 shadow-xl">
-        <p className="mx-auto max-w-xs text-center text-lg font-bold leading-snug text-black">
-          Are you sure you want to permanently delete this post?
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+      onClick={onCancel}
+    >
+      <section
+        className="w-full max-w-sm rounded-lg bg-white p-6 shadow-xl"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <h2 className="text-lg font-semibold text-gray-900">Delete this emergency request?</h2>
+        <p className="mt-2 text-sm text-gray-600">
+          This action can't be undone. The emergency request will be permanently removed.
         </p>
 
-        <div className="mt-5 flex justify-center gap-4">
+        <div className="mt-6 flex justify-end gap-3">
           <button
-            className="h-9 rounded-md bg-red-500 px-7 text-sm font-bold text-white shadow-md transition hover:bg-red-600 hover:ring-2 hover:ring-red-100"
-            onClick={onConfirm}
-            type="button"
-          >
-            Delete
-          </button>
-          <button
-            className="h-9 rounded-md bg-slate-400 px-7 text-sm font-bold text-white shadow-md transition hover:bg-slate-500 hover:ring-2 hover:ring-slate-200"
+            className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
             onClick={onCancel}
             type="button"
           >
             Cancel
+          </button>
+          <button
+            className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+            onClick={onConfirm}
+            type="button"
+          >
+            Delete
           </button>
         </div>
       </section>
