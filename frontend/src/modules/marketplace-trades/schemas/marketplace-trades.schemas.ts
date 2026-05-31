@@ -56,7 +56,7 @@ export const tradeFormSchema = z.object({
       title: z.string().trim().min(1, "Title is required").max(120),
       ownerName: z.string().trim().min(1, "Name is required").max(80),
       offering: z.string().trim().min(1, "Offer is required").max(200),
-      wanting: z.string().trim().min(1, "Want is requried").max(200),
+      wanting: z.string().trim().min(1, "Want is required").max(200),
       itemType: z.enum(ITEM_TYPES),
       urgency: z.enum(URGENCIES),
       area: z.string().trim().min(1, "Location is required").max(120),

@@ -31,7 +31,11 @@ interface AddTradeFormProps {
 }
 
 const inputClass =
-  "w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-green-500 focus:outline-none";
+  "w-full rounded-md border border-gray-300 px-3 py-2 text-sm transition-colors focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500 aria-[invalid=true]:border-red-400 aria-[invalid=true]:focus:ring-red-400";
+
+const titleCase = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
+
+const NOTE_MAX = 500;
 
 export function AddTradeForm({
   open,
@@ -79,6 +83,14 @@ export function AddTradeForm({
 
   function set<K extends keyof TradeFormValues>(key: K, value: TradeFormValues[K]) {
     setValues((v) => ({ ...v, [key]: value }));
+    // Clear the field-level error as soon as the user edits it, so stale
+    // validation messages don't linger while they're fixing the input.
+    setFieldErrors((errs) => {
+      if (!errs[key as string]) return errs;
+      const next = { ...errs };
+      delete next[key as string];
+      return next;
+    });
   }
 
   function handleSubmit(e: FormEvent) {
@@ -114,63 +126,80 @@ export function AddTradeForm({
       </h2>
 
       <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <Field label="Title" error={fieldErrors.title}>
+        <Field label="Title" error={fieldErrors.title} required>
           <input
             type="text"
             value={values.title}
             onChange={(e) => set("title", e.target.value)}
+            placeholder="e.g. Trading rice for blankets"
+            maxLength={120}
+            autoFocus
+            aria-invalid={Boolean(fieldErrors.title)}
             className={inputClass}
           />
         </Field>
 
-        <Field label="Your name" error={fieldErrors.ownerName}>
+        <Field label="Your name" error={fieldErrors.ownerName} required>
           <input
             type="text"
             value={values.ownerName}
             onChange={(e) => set("ownerName", e.target.value)}
+            placeholder="e.g. Aung Aung"
+            maxLength={80}
+            aria-invalid={Boolean(fieldErrors.ownerName)}
             className={inputClass}
           />
         </Field>
 
-        <Field label="Contact" error={fieldErrors.contact}>
+        <Field label="Contact" error={fieldErrors.contact} required>
           <input
             type="text"
             value={values.contact}
             onChange={(e) => set("contact", e.target.value)}
+            placeholder="e.g. 09xxxxxxxxx or @telegram"
+            maxLength={60}
+            aria-invalid={Boolean(fieldErrors.contact)}
             className={inputClass}
           />
         </Field>
 
-        <Field label="Offering (+ qty)" error={fieldErrors.offering}>
+        <Field label="Offering (+ qty)" error={fieldErrors.offering} required>
           <input
             type="text"
             value={values.offering}
             onChange={(e) => set("offering", e.target.value)}
             placeholder="e.g. Rice (20 kg)"
+            maxLength={200}
+            aria-invalid={Boolean(fieldErrors.offering)}
             className={inputClass}
           />
         </Field>
 
-        <Field label="Wanting (+ qty)" error={fieldErrors.wanting}>
+        <Field label="Wanting (+ qty)" error={fieldErrors.wanting} required>
           <input
             type="text"
             value={values.wanting}
             onChange={(e) => set("wanting", e.target.value)}
             placeholder="e.g. Blankets (5)"
+            maxLength={200}
+            aria-invalid={Boolean(fieldErrors.wanting)}
             className={inputClass}
           />
         </Field>
 
-        <Field label="Location" error={fieldErrors.area}>
+        <Field label="Location" error={fieldErrors.area} required>
           <input
             type="text"
             value={values.area}
             onChange={(e) => set("area", e.target.value)}
+            placeholder="e.g. Yangon, Hlaing Township"
+            maxLength={120}
+            aria-invalid={Boolean(fieldErrors.area)}
             className={inputClass}
           />
         </Field>
 
-        <Field label="Category" error={fieldErrors.itemType}>
+        <Field label="Category" error={fieldErrors.itemType} required>
           <select
             value={values.itemType}
             onChange={(e) => set("itemType", e.target.value as TradeFormValues["itemType"])}
@@ -178,13 +207,13 @@ export function AddTradeForm({
           >
             {ITEM_TYPES.map((t) => (
               <option key={t} value={t}>
-                {t}
+                {titleCase(t)}
               </option>
             ))}
           </select>
         </Field>
 
-        <Field label="Urgency" error={fieldErrors.urgency}>
+        <Field label="Urgency" error={fieldErrors.urgency} required>
           <select
             value={values.urgency}
             onChange={(e) => set("urgency", e.target.value as TradeFormValues["urgency"])}
@@ -192,7 +221,7 @@ export function AddTradeForm({
           >
             {URGENCIES.map((u) => (
               <option key={u} value={u}>
-                {u}
+                {titleCase(u)}
               </option>
             ))}
           </select>
@@ -203,8 +232,11 @@ export function AddTradeForm({
             type="file"
             accept="image/*"
             onChange={(e) => setPhoto(e.target.files?.[0] ?? null)}
-            className="w-full text-sm text-gray-600 file:mr-3 file:rounded-md file:border-0 file:bg-green-50 file:px-3 file:py-2 file:text-sm file:font-medium file:text-green-700"
+            className="w-full text-sm text-gray-600 file:mr-3 file:rounded-md file:border-0 file:bg-green-50 file:px-3 file:py-2 file:text-sm file:font-medium file:text-green-700 hover:file:bg-green-100"
           />
+          <span className="mt-1 block text-xs text-gray-500">
+            {photo ? `Selected: ${photo.name}` : "PNG or JPG, up to ~2 MB."}
+          </span>
         </Field>
 
         <div className="sm:col-span-2 lg:col-span-3">
@@ -213,8 +245,14 @@ export function AddTradeForm({
               value={values.note ?? ""}
               onChange={(e) => set("note", e.target.value)}
               rows={2}
+              maxLength={NOTE_MAX}
+              placeholder="Any extra details: pickup times, condition, preferred swaps…"
+              aria-invalid={Boolean(fieldErrors.note)}
               className={inputClass}
             />
+            <span className="mt-1 block text-right text-xs text-gray-400">
+              {(values.note ?? "").length}/{NOTE_MAX}
+            </span>
           </Field>
         </div>
       </div>
@@ -244,13 +282,17 @@ export function AddTradeForm({
 interface FieldProps {
   label: string;
   error?: string;
+  required?: boolean;
   children: ReactNode;
 }
 
-function Field({ label, error, children }: FieldProps) {
+function Field({ label, error, required, children }: FieldProps) {
   return (
     <label className="block text-sm font-medium text-gray-700">
-      {label}
+      <span>
+        {label}
+        {required && <span className="ml-0.5 text-red-500" aria-hidden="true">*</span>}
+      </span>
       <div className="mt-1">{children}</div>
       {error && <span className="mt-1 block text-xs text-red-600">{error}</span>}
     </label>
