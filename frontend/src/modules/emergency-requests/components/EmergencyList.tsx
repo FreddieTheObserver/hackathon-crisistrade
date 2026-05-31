@@ -43,6 +43,7 @@ const EmergencyList = ({
             onDelete={onDeletePost}
             onEdit={onEditPost}
             onMarkHelped={onMarkHelped}
+            onPreviewPhoto={onPreviewPhoto}
             post={post}
           />
         ))}
