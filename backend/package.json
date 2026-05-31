@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "db:push": "prisma generate && prisma db push",
-    "seed": "tsx prisma/seed.ts"
+    "seed": "tsx prisma/seed.ts",
+    "seed:admin": "tsx prisma/seed-admin.ts"
   },
   "keywords": [],
   "author": "",
